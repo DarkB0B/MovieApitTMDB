@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+﻿using FireSharp.Interfaces;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using MovieApitTMDB.Models;
 using Newtonsoft.Json;
@@ -7,7 +8,10 @@ namespace MovieApitTMDB.Services
 {
     public class ExternalApiService
     {
-        string apiKey = "2c3773c58b96fc195869c5f3162ff399";
+        private string apiKey = "2c3773c58b96fc195869c5f3162ff399";
+
+        Deserializer deserializer = new Deserializer();
+
 
         public async Task<List<Genre>> GetGenres()
         {
@@ -36,30 +40,28 @@ namespace MovieApitTMDB.Services
                 return genres;
             }
         }
-        public async Task<List<Movie>> GetMoviesPerGenre(List<int> genreIds)
+        public async Task<List<Movie>> GetMoviesPerGenre(int genreId)
         {
-            int genreId = genreIds[0];
             var client = new HttpClient();
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?with_genres={genreId}&sort_by=vote_average.desc?api_key={apiKey}&language=en-US\r\n"),
+                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&sort_by=vote_average.desc"),
             };
-            
+
             using (var response = await client.SendAsync(request))
             {
                 response.EnsureSuccessStatusCode();
                 var body = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<dynamic>(body);
-                //List<Movie> movies = new List<Movie>();
-
-
-                return result;
+                if(result == null)
+                {
+                    throw new ArgumentNullException("API returned null");
+                }
+                List<Movie> movies = deserializer.DeserializeListOfMovies(result);
+                return movies;
             }
 
-
-
-                
         }
 
     }

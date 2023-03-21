@@ -8,7 +8,6 @@
         public string ReleaseDate { get; set; }
         public string? BackdropPath { get; set; }
         public string? OriginalTitle { get; set; }
-        public List<string>? GenreIds { get; set; }
         public string? Popularity { get; set; }
         public int Id { get; set; }
 
