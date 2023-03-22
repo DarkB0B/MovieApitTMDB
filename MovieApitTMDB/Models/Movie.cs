@@ -10,7 +10,5 @@
         public string? OriginalTitle { get; set; }
         public string? Popularity { get; set; }
         public int Id { get; set; }
-
-        
     }
 }
