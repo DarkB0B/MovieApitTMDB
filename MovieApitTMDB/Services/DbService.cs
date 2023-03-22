@@ -14,11 +14,23 @@ namespace MovieApitTMDB.Services
         };
         IFirebaseClient client;
 
-        public async void AddGenreToDb(Genre genre)
+        public void AddGenreToDb(Genre genre)
         {
             client = new FireSharp.FirebaseClient(config);
-            var data = genre;
             SetResponse setResponse = client.Set("Genres/" + genre.Id, genre);
+        }
+
+        public void AddPremiumUserToDb(string userId)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            var data = new User { Id = userId, IsPremium = true };
+            SetResponse setResponse = client.Set("Users/" + userId, data);
+        }
+
+        public void AddMovieCollectionToDb(MovieCollection movieCollection)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            SetResponse setResponse = client.Set("MovieCollections/" +  movieCollection.Id, movieCollection);
         }
     }
 }

@@ -14,8 +14,8 @@ namespace MovieApitTMDB.Controllers
     public class NonProductionController : ControllerBase
     {
 
-        ExternalApiService externalApiService = new ExternalApiService();
-        DbService dbService = new DbService();
+        readonly ExternalApiService externalApiService = new ExternalApiService();
+        readonly DbService dbService = new DbService();
 
         [Authorize(Roles = "")]
         [HttpPut]

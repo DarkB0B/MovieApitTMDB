@@ -19,7 +19,7 @@ namespace MovieApitTMDB.Controllers
     public class MoviesController : ControllerBase
     {
         
-        ExternalApiService externalApiService = new ExternalApiService();
+        readonly ExternalApiService externalApiService = new ExternalApiService();
 
         
         [HttpGet]
