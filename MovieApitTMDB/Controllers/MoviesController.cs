@@ -20,13 +20,31 @@ namespace MovieApitTMDB.Controllers
     {
         
         readonly ExternalApiService externalApiService = new ExternalApiService();
+        readonly DbService dbService = new DbService();
 
-        
         [HttpGet]
         public async Task<JsonResult> Get(int genreId)
         {
             List<Movie> movies = await externalApiService.GetMoviesPerGenre(genreId);
+            MovieCollection moviesCollection = new MovieCollection
+            {
+                Id = 1,
+                Title = "Test",
+                Movies = movies
+            };
+            
             return new JsonResult(movies);
-        }       
+        }
+
+        [HttpGet]
+        [Route("GetMovieCollection")]      
+        public async Task<JsonResult> GetMovieCollection(int collectionId)
+        {
+            MovieCollection movieCollection = dbService.GetMovieCollectionFromDb(collectionId);
+            return new JsonResult(movieCollection);
+
+
+            
+        }
     }
 }

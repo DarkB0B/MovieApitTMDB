@@ -1,6 +1,6 @@
 ﻿namespace MovieApitTMDB.Models
 {
-    public class PregeneratedMovieList
+    public class MovieCollection
     {
         public int Id { get; set; }
         public string Title { get; set; }

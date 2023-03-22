@@ -2,6 +2,7 @@
 using FireSharp.Interfaces;
 using FireSharp.Response;
 using MovieApitTMDB.Models;
+using Newtonsoft.Json;
 
 namespace MovieApitTMDB.Services
 {
@@ -32,5 +33,15 @@ namespace MovieApitTMDB.Services
             client = new FireSharp.FirebaseClient(config);
             SetResponse setResponse = client.Set("MovieCollections/" +  movieCollection.Id, movieCollection);
         }
+        
+        public MovieCollection GetMovieCollectionFromDb(int collectionId) 
+        {           
+                client = new FireSharp.FirebaseClient(config);
+                FirebaseResponse response = client.Get($"MovieCollections/{collectionId}");
+                var result = JsonConvert.DeserializeObject<MovieCollection>(response.Body);
+                return result;           
+        }
+
+
     }
 }

@@ -23,5 +23,15 @@ namespace MovieApitTMDB.Services
             }
             return movies;
         }   
+        public MovieCollection DeserializeMovieCollection(dynamic result)
+        {
+            MovieCollection movieCollection = new MovieCollection
+            {
+                Id = result.id,
+                Title = result.name,
+                Movies = DeserializeListOfMovies(result.parts)
+            };
+            return movieCollection;
+        }   
     }
 }
