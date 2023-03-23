@@ -17,21 +17,14 @@ namespace MovieApitTMDB.Services
                     ReleaseDate = item.release_date,
                     BackdropPath = item.backdrop_path,
                     OriginalTitle = item.original_title,
+                    VoteAvredge = item.vote_average,
+                    Runtime = item.runtime,
                     Popularity = item.popularity,
                     Id = item.id
                 });
             }
             return movies;
         }   
-        public MovieCollection DeserializeMovieCollection(dynamic result)
-        {
-            MovieCollection movieCollection = new MovieCollection
-            {
-                Id = result.id,
-                Title = result.name,
-                Movies = DeserializeListOfMovies(result.parts)
-            };
-            return movieCollection;
-        }   
+           
     }
 }
