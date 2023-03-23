@@ -24,8 +24,10 @@ namespace MovieApitTMDB.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost]
-        public IActionResult AssUserToRoom([FromBody] string userId, string Id)
+        [Route("AddUserToRoom")]
+        public IActionResult AddUserToRoom([FromBody] string userId, string Id)
         {
             try
             {
