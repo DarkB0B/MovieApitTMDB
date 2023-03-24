@@ -18,12 +18,12 @@ namespace MovieApitTMDB.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        
+
         readonly ExternalApiService externalApiService = new ExternalApiService();
         readonly DbService dbService = new DbService();
 
         [HttpGet]
-        public async Task<JsonResult> Get(List<int> genreList)
+        public async Task<JsonResult> Get([FromBody] List<int> genreList)
         {
             List<Movie> movies = new List<Movie>();
             foreach (int genreId in genreList)

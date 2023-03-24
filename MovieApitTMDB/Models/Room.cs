@@ -6,6 +6,7 @@
         public int UsersInRoom { get ; set; }
         public int RoomSize { get; set; } //required 2 to start
         public bool IsStarted { get; set; } = false; //after joining phase ends = true and no one can join
+        public List<List<Movie>> MovieLists { get; set; }
         public bool IsCompleted { get; set; } = false;
     }
 }
