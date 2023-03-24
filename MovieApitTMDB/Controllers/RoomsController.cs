@@ -27,21 +27,55 @@ namespace MovieApitTMDB.Controllers
 
         [HttpPost]
         [Route("AddUserToRoom")]
-        public IActionResult AddUserToRoom([FromBody] string userId, string Id)
+        public IActionResult AddUserToRoom([FromBody] string Id)
         {
             try
             {
                 Room room = dbService.GetRoomFromDb(Id);
-                room.UserIdList.Add(userId);
+                room.UsersInRoom++;
                 dbService.UpdateRoomInDb(room);
-                return Ok($"User {Id} joined room {room.Id}");
+                return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost]
+        [Route("AddMovieListToRoom")]
+        public IActionResult AddMovieListToRoom([FromBody] string Id, List<Movie> movies) //if last user added a movie it returns "completed" so app can recognize when it ended
+        {
+            try
+            {
+                Room room = dbService.GetRoomFromDb(Id);
+                room.MovieLists.Add(movies);
+                if(room.MovieLists.Count == room.RoomSize)
+                {
+                    string completed = "completed";
+                    room.IsCompleted = true;
+                    return new JsonResult(completed);
+                }
+                dbService.UpdateRoomInDb(room);
+                return Ok("MovieList Updated");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("IsCompleted")]
+        public JsonResult IsCompleted(string Id)
+        {
+            Room room = dbService.GetRoomFromDb(Id);
+            if(room.IsCompleted == true)
+            {
+                return new JsonResult("true");
+            }
+            return new JsonResult("false");
+        }
 
+  
 
 
         [HttpGet]
