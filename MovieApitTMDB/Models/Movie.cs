@@ -13,5 +13,6 @@
         public string? Popularity { get; set; }
         public string? Runtime { get; set; }
         public int Id { get; set; }
+        public int Likes { get; set; }
     }
 }

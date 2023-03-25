@@ -10,14 +10,26 @@ namespace MovieApitTMDB.Controllers
     public class RoomsController : ControllerBase
     {
         readonly DbService dbService = new DbService();
-
         [HttpPost]
-        public IActionResult Post([FromBody] Room room) //add room to db
+        public IActionResult Post() //add room to db
         {
+            Room room = new Room
+            {
+                Id = CodeGenerator.RandomString(5),
+                UsersInRoom = 1,
+                IsStarted = false,
+                IsCompleted = false,
+            };
             try
             {
-                dbService.AddRoomToDb(room);
-                return Ok(room);
+                if(dbService.GetRoomFromDb(room.Id) == null)
+                {
+                    dbService.AddRoomToDb(room);
+                    return Ok(room);
+                }
+
+                return BadRequest("Room With This Id Exists");
+                
             }
             catch (Exception ex)
             {
@@ -48,15 +60,19 @@ namespace MovieApitTMDB.Controllers
             try
             {
                 Room room = dbService.GetRoomFromDb(Id);
-                room.MovieLists.Add(movies);
-                if(room.MovieLists.Count == room.RoomSize)
+                if (room.IsStarted == true && room.IsCompleted == false)
                 {
-                    string completed = "completed";
-                    room.IsCompleted = true;
-                    return new JsonResult(completed);
+                    room.MovieLists.Add(movies);
+                    if (room.MovieLists.Count == room.UsersInRoom)
+                    {
+                        string completed = "completed";
+                        room.IsCompleted = true;
+                        return new JsonResult(completed);
+                    }
+                    dbService.UpdateRoomInDb(room);
+                    return Ok("MovieList Updated");
                 }
-                dbService.UpdateRoomInDb(room);
-                return Ok("MovieList Updated");
+                return BadRequest();
             }
             catch (Exception ex)
             {
@@ -119,15 +135,54 @@ namespace MovieApitTMDB.Controllers
         {
             try
             {
+                
                 Room room = dbService.GetRoomFromDb(Id);
-                room.IsStarted = true;
-                dbService.UpdateRoomInDb(room);
-                return Ok(room);
+                if (room.UsersInRoom >= 2)
+                {
+                    room.IsStarted = true;
+                    dbService.UpdateRoomInDb(room);
+                    return Ok(room);
+
+                }
+                return BadRequest("Not Enough People Joined The Room");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpGet]
+        [Route("MovieList")]
+        public JsonResult GetMovieList(string Id) 
+        {
+            Room room = dbService.GetRoomFromDb(Id);
+            double treshold = room.MovieLists.Count * 0.7;
+            Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
+
+            foreach(List<Movie> movieList in room.MovieLists)
+            {
+                foreach(Movie obj in movieList)
+                {
+                    if (objCount.ContainsKey(obj))
+                    {
+                        objCount[obj]++;
+                    }
+                    else
+                    {
+                        objCount.Add(obj, 1);
+                    }
+                }
+            }
+            List<Movie> commonMovies = new List<Movie>();
+            foreach (KeyValuePair<Movie, int> entry in objCount)
+            {
+                if(entry.Value >= treshold)
+                {
+                    commonMovies.Add(entry.Key);
+                }
+            }
+            return new JsonResult(Ok(commonMovies));
+            
         }
     }
 }
