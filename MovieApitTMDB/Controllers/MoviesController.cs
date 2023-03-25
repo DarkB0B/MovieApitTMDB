@@ -25,6 +25,7 @@ namespace MovieApitTMDB.Controllers
         [HttpGet]
         public async Task<JsonResult> Get([FromBody] List<int> genreList)
         {
+            
             List<Movie> movies = new List<Movie>();
             foreach (int genreId in genreList)
             {
@@ -33,7 +34,18 @@ namespace MovieApitTMDB.Controllers
             //randomly choose some movies from movies list                 
             return new JsonResult(movies);
         }
+        [HttpGet]
+        [Route("GetMoviePerGenreTest")]
+        public async Task<JsonResult> Get(int genre)
+        {
 
-        
+            List<Movie> movies = new List<Movie>();
+           
+                movies = await externalApiService.GetMoviesPerGenre(genre);
+         
+            //randomly choose some movies from movies list                 
+            return new JsonResult(movies);
+        }
+
     }
 }

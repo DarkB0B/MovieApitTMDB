@@ -42,15 +42,16 @@ namespace MovieApitTMDB.Services
         }
         public async Task<List<Movie>> GetMoviesPerGenre(int genreId)
         {
+            int page = 1;
             var client = new HttpClient();
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&sort_by=vote_average.desc"),
+                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&page={page}&sort_by=vote_average.desc"),
             };
 
             using (var response = await client.SendAsync(request))
-            {
+            {              
                 response.EnsureSuccessStatusCode();
                 var body = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<dynamic>(body);
