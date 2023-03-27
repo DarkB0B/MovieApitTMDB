@@ -1,4 +1,3 @@
-using MovieApitTMDB.Hubs;
 
 
 
@@ -11,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
-builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -29,7 +28,7 @@ app.UseRouting();
 
 
 app.MapControllers();
-app.MapHub<RoomHub>("hubs/roomhub");
+
 
 
 

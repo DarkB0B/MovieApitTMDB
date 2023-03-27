@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MovieApitTMDB.Hubs;
 using MovieApitTMDB.Models;
 using MovieApitTMDB.Services;
 
@@ -13,11 +12,7 @@ namespace MovieApitTMDB.Controllers
     {
 
         readonly DbService dbService = new DbService();
-        private readonly IHubContext<RoomHub> _hubContext;
-        public RoomsController(IHubContext<RoomHub> hubContext)
-            {
-            _hubContext = hubContext;
-            }
+        
         [HttpPost]
         public IActionResult Post() //add room to db
         {
@@ -74,7 +69,6 @@ namespace MovieApitTMDB.Controllers
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {                      
                         room.IsCompleted = true;
-                        _hubContext.Clients.Group(Id).SendAsync("completed");
                         return  Ok("Picking Phase Completed");
                     }
                     dbService.UpdateRoomInDb(room);
@@ -149,7 +143,6 @@ namespace MovieApitTMDB.Controllers
                 {
                     room.IsStarted = true;
                     dbService.UpdateRoomInDb(room);
-                    _hubContext.Clients.Group(Id).SendAsync("started");
                     return Ok(room);
 
                 }
