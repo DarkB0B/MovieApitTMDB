@@ -106,14 +106,23 @@ namespace API.Services
             FirebaseResponse response = await client.GetAsync($"Users/{userName}");
             if (response.Body == null || response == null)
             {
-                var result = JsonConvert.DeserializeObject<User>(response.Body);
-                if (result.Password == userCredentials.Password)
-                {
-                    return "ok";
-                }
-                return "wrong password";
+                return "wrong username";
             }
-            return "wrong username";
+            var result = JsonConvert.DeserializeObject<User>(response.Body);
+            if (result.Password == userCredentials.Password)
+            {
+               return "ok";
+            }
+               return "wrong password";          
+            
+        }
+        public async void UpdatePassword(UserCredentials userCredentials)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            FirebaseResponse response = await client.GetAsync($"Users/{userCredentials.UserName}");
+            var result = JsonConvert.DeserializeObject<User>(response.Body);
+            result.Password = userCredentials.Password;
+            SetResponse setResponse = await client.SetAsync("Users/" + result.UserName, result);
         }
     }
 }

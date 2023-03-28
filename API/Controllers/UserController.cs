@@ -22,12 +22,12 @@ namespace API.Controllers
             return Ok();
         }
         [HttpPut]
-        public async Task<IActionResult> ChangePassword([FromBody] UserCredentials userCredentials, string newPassword)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePassword)
         {
-            string res = await dbService.AreCredentialsOk(userCredentials);
+            string res = await dbService.AreCredentialsOk(new UserCredentials { UserName = changePassword.UserName, Password = changePassword.Password});
             if (res == "ok")
             {
-                dbService.AddUserToDb(new UserCredentials { UserName = userCredentials.UserName, Password = newPassword});
+                dbService.UpdatePassword(new UserCredentials { UserName = changePassword.UserName, Password = changePassword.NewPassword});
                 return Ok("Password Changed");
             }
             else
