@@ -11,6 +11,7 @@ using APIef.Services;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using APIef.Data;
 
 namespace APIef.Controllers
 {
@@ -19,8 +20,15 @@ namespace APIef.Controllers
     public class MoviesController : ControllerBase
     {
 
+
         readonly ExternalApiService externalApiService = new ExternalApiService();
-        readonly DbService dbService = new DbService();
+        private readonly DataContext _context;
+
+        public MoviesController(DataContext context)
+        {
+            _context = context;
+        }
+
 
         [HttpGet]
         public async Task<JsonResult> Get([FromBody] List<int> genreList)

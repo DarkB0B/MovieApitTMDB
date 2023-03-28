@@ -1,4 +1,5 @@
-﻿using APIef.Models;
+﻿using APIef.Data;
+using APIef.Models;
 using APIef.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,12 @@ namespace APIef.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        
+        private readonly DataContext _context;
+
+        public UserController(DataContext context)
+        {
+            _context = context;
+        }
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserCredentials user)

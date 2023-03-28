@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using APIef.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIef.Controllers
@@ -7,5 +8,11 @@ namespace APIef.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
+        private readonly DataContext _context;
+
+        public RolesController(DataContext context)
+        {
+            _context = context;
+        }
     }
 }

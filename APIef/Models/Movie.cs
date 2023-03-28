@@ -1,7 +1,10 @@
-﻿namespace APIef.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace APIef.Models
 {
     public class Movie
     {
+        [Key]
         public string Title { get; set; }
         public string Overview { get; set; }
         public string PosterPath { get; set; } = string.Empty;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using APIef.Models;
 using APIef.Services;
+using APIef.Data;
 
 namespace APIef.Controllers
 {
@@ -11,8 +12,12 @@ namespace APIef.Controllers
     public class RoomsController : ControllerBase
     {
 
-        readonly DbService dbService = new DbService();
-        
+        private readonly DataContext _context;
+
+        public RoomsController(DataContext context)
+        {
+            _context = context;
+        }
         [HttpPost]
         public IActionResult Post() //add room to db
         {

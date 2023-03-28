@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using APIef.Models;
 using APIef.Services;
+using APIef.Data;
 
 namespace APIef.Controllers
 {
@@ -15,9 +16,13 @@ namespace APIef.Controllers
     {
 
         readonly ExternalApiService externalApiService = new ExternalApiService();
-        readonly DbService dbService = new DbService();
+        private readonly DataContext _context;
 
-        
+        public NonProductionController(DataContext context)
+        {
+            _context = context;
+        }
+
         [HttpPut]
         [Route("SaveGenresInDb")]
         public async Task<IActionResult> SaveGenresInDb()
