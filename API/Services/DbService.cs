@@ -17,38 +17,38 @@ namespace API.Services
 
         //------Genre
 
-        public void AddGenreToDb(Genre genre)
+        public async void AddGenreToDb(Genre genre)
         {
             client = new FireSharp.FirebaseClient(config);
-            SetResponse setResponse = client.Set("Genres/" + genre.Id, genre);
+            SetResponse setResponse = await client.SetAsync("Genres/" + genre.Id, genre);
         }
 
-        public void AddPremiumUserToDb(string userId)
+        public async void AddPremiumUserToDb(string userName)
         {
             client = new FireSharp.FirebaseClient(config);
-            var data = new User { Id = userId, IsPremium = true };
-            SetResponse setResponse = client.Set("Users/" + userId, data);
+            var data = new User { UserName = userName, IsPremium = true };
+            SetResponse setResponse = await client.SetAsync("Users/" + userName, data);
         }      
 
         //-------Movie
 
-        public void AddMovieCollectionToDb(MovieCollection movieCollection)
+        public async void AddMovieCollectionToDb(MovieCollection movieCollection)
         {
             client = new FireSharp.FirebaseClient(config);
-            SetResponse setResponse = client.Set("MovieCollections/" +  movieCollection.Id, movieCollection);
+            SetResponse setResponse = await client.SetAsync("MovieCollections/" +  movieCollection.Id, movieCollection);
         }  
 
-        public MovieCollection GetMovieCollectionFromDb(int collectionId) 
+        public async Task<MovieCollection> GetMovieCollectionFromDb(int collectionId) 
         {           
                 client = new FireSharp.FirebaseClient(config);
-                FirebaseResponse response = client.Get($"MovieCollections/{collectionId}");
+                FirebaseResponse response = await client.GetAsync($"MovieCollections/{collectionId}");
                 var result = JsonConvert.DeserializeObject<MovieCollection>(response.Body);
                 return result;           
         }
-        public List<MovieCollection> GetAllMovieCollectionsFromDb()
+        public async Task<List<MovieCollection>> GetAllMovieCollectionsFromDb()
         {
             client = new FireSharp.FirebaseClient(config);
-            FirebaseResponse response = client.Get($"MovieCollections");
+            FirebaseResponse response = await client.GetAsync($"MovieCollections");
 
             var result = JsonConvert.DeserializeObject<List<MovieCollection>>(response.Body);
             return result;
@@ -56,15 +56,15 @@ namespace API.Services
 
         //-------ROOM
 
-        public void AddRoomToDb(Room room)
+        public async void AddRoomToDb(Room room)
         {
             client = new FireSharp.FirebaseClient(config);
-            SetResponse setResponse = client.Set("Rooms/" + room.Id, room);
+            SetResponse setResponse = await client.SetAsync("Rooms/" + room.Id, room);
         }
-        public Room GetRoomFromDb(string roomId)
+        public async Task<Room> GetRoomFromDb(string roomId)
         {
             client = new FireSharp.FirebaseClient(config);
-            FirebaseResponse response = client.Get($"Rooms/{roomId}");
+            FirebaseResponse response = await client.GetAsync($"Rooms/{roomId}");
             var result = JsonConvert.DeserializeObject<Room>(response.Body);
             return result;
         }
@@ -73,5 +73,47 @@ namespace API.Services
             AddRoomToDb(room);           
         }
 
+        //-------User
+        public async void AddUserToDb(User user)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            SetResponse setResponse = await client.SetAsync("Users/" +  user.UserName, user);
+        }
+        public async Task<User> GetUserFromDb(string userName)
+        {           
+            client = new FireSharp.FirebaseClient(config);
+            FirebaseResponse response = await client.GetAsync($"Users/{userName}");
+            var result = JsonConvert.DeserializeObject<User>(response.Body);
+            return result;                  
+        }
+        public async Task<bool> IsUsernameInDb(string userName)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            FirebaseResponse response = await client.GetAsync($"Users/{userName}");
+            if (response.Body == null || response == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        public async Task<string> AreCredentialsOk(UserCredentials userCredentials)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            string userName = userCredentials.UserName;
+            FirebaseResponse response = await client.GetAsync($"Users/{userName}");
+            if (response.Body == null || response == null)
+            {
+                var result = JsonConvert.DeserializeObject<User>(response.Body);
+                if (result.Password == userCredentials.Password)
+                {
+                    return "ok";
+                }
+                return "wrong password";
+            }
+            return "wrong username";
+        }
     }
 }

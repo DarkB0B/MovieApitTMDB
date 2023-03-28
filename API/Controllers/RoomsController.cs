@@ -42,11 +42,11 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("AddUserToRoom")]
-        public IActionResult AddUserToRoom([FromBody] string Id) //add user to room
+        public async Task<IActionResult> AddUserToRoom([FromBody] string Id) //add user to room
         {
             try
             {
-                Room room = dbService.GetRoomFromDb(Id);
+                Room room = await dbService.GetRoomFromDb(Id);
                 room.UsersInRoom++;
                 dbService.UpdateRoomInDb(room);
                 return Ok();
@@ -58,11 +58,11 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("AddMovieListToRoom")]
-        public IActionResult AddMovieListToRoom([FromBody] List<Movie> movies, string Id) //if last user added a movie it returns "completed" so app can recognize when it ended
+        public async Task<IActionResult> AddMovieListToRoom([FromBody] List<Movie> movies, string Id) //if last user added a movie it returns "completed" so app can recognize when it ended
         {
             try
             {
-                Room room = dbService.GetRoomFromDb(Id);
+                Room room = await dbService.GetRoomFromDb(Id);
                 if (room.IsStarted == true && room.IsCompleted == false)
                 {
                     room.MovieLists.Add(movies);
@@ -83,9 +83,9 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("IsCompleted")]
-        public JsonResult IsCompleted(string Id) //check if picking phase is completed
+        public async Task<JsonResult> IsCompleted(string Id) //check if picking phase is completed
         {
-            Room room = dbService.GetRoomFromDb(Id);
+            Room room = await dbService.GetRoomFromDb(Id);
             if(room.IsCompleted == true)
             {
                 return new JsonResult("true");
@@ -95,11 +95,11 @@ namespace API.Controllers
 
 
         [HttpGet]
-        public IActionResult Get(string Id) //get room from db
+        public async Task<IActionResult> Get(string Id) //get room from db
         {
             try
             {
-                Room room = dbService.GetRoomFromDb(Id);
+                Room room = await dbService.GetRoomFromDb(Id);
                 return Ok(room);
             }
             catch (Exception ex)
@@ -122,9 +122,9 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("IsStarted")] //check if room is started
-        public JsonResult IsStarted(string Id)
+        public async Task<JsonResult> IsStarted(string Id)
         {
-            Room room = dbService.GetRoomFromDb(Id);
+            Room room = await dbService.GetRoomFromDb(Id);
             if(room.IsStarted == true)
             {
                 return new JsonResult("true");
@@ -133,12 +133,12 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("StartRoom")]
-        public IActionResult StartRoom([FromBody] string Id) //start room
+        public async Task<IActionResult> StartRoom([FromBody] string Id) //start room
         {
             try
             {
                 
-                Room room = dbService.GetRoomFromDb(Id);
+                Room room = await dbService.GetRoomFromDb(Id);
                 if (room.UsersInRoom >= 2)
                 {
                     room.IsStarted = true;
@@ -155,9 +155,9 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("MovieList")]
-        public JsonResult GetMovieList(string Id) 
+        public async Task<JsonResult> GetMovieList(string Id) 
         {
-            Room room = dbService.GetRoomFromDb(Id);
+            Room room = await dbService.GetRoomFromDb(Id);
             double treshold = room.MovieLists.Count * 0.7;
             Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
 

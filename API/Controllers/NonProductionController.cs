@@ -17,7 +17,7 @@ namespace API.Controllers
         readonly ExternalApiService externalApiService = new ExternalApiService();
         readonly DbService dbService = new DbService();
 
-        [Authorize(Roles = "")]
+        
         [HttpPut]
         [Route("SaveGenresInDb")]
         public async Task<IActionResult> SaveGenresInDb()

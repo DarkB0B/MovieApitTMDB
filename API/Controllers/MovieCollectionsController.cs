@@ -16,7 +16,7 @@ namespace API.Controllers
         {
             try
             {
-                MovieCollection movieCollection = dbService.GetMovieCollectionFromDb(collectionId);
+                MovieCollection movieCollection = await dbService.GetMovieCollectionFromDb(collectionId);
                 return new JsonResult(movieCollection);
             }
             catch (Exception ex)
@@ -31,7 +31,7 @@ namespace API.Controllers
         {
             try
             {
-                List<MovieCollection> movieCollectionList = dbService.GetAllMovieCollectionsFromDb();
+                List<MovieCollection> movieCollectionList = await dbService.GetAllMovieCollectionsFromDb();
                 return new JsonResult(movieCollectionList);
             }
             catch (Exception ex)
