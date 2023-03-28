@@ -28,22 +28,22 @@ namespace API.Services
             client = new FireSharp.FirebaseClient(config);
             var data = new User { UserName = userName, IsPremium = true };
             SetResponse setResponse = await client.SetAsync("Users/" + userName, data);
-        }      
+        }
 
         //-------Movie
 
         public async void AddMovieCollectionToDb(MovieCollection movieCollection)
         {
             client = new FireSharp.FirebaseClient(config);
-            SetResponse setResponse = await client.SetAsync("MovieCollections/" +  movieCollection.Id, movieCollection);
-        }  
+            SetResponse setResponse = await client.SetAsync("MovieCollections/" + movieCollection.Id, movieCollection);
+        }
 
-        public async Task<MovieCollection> GetMovieCollectionFromDb(int collectionId) 
-        {           
-                client = new FireSharp.FirebaseClient(config);
-                FirebaseResponse response = await client.GetAsync($"MovieCollections/{collectionId}");
-                var result = JsonConvert.DeserializeObject<MovieCollection>(response.Body);
-                return result;           
+        public async Task<MovieCollection> GetMovieCollectionFromDb(int collectionId)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            FirebaseResponse response = await client.GetAsync($"MovieCollections/{collectionId}");
+            var result = JsonConvert.DeserializeObject<MovieCollection>(response.Body);
+            return result;
         }
         public async Task<List<MovieCollection>> GetAllMovieCollectionsFromDb()
         {
@@ -70,21 +70,21 @@ namespace API.Services
         }
         public void UpdateRoomInDb(Room room)
         {
-            AddRoomToDb(room);           
+            AddRoomToDb(room);
         }
 
         //-------User
         public async void AddUserToDb(UserCredentials user)
         {
             client = new FireSharp.FirebaseClient(config);
-            SetResponse setResponse = await client.SetAsync("Users/" +  user.UserName, user);
+            SetResponse setResponse = await client.SetAsync("Users/" + user.UserName, user);
         }
         public async Task<User> GetUserFromDb(string userName)
-        {           
+        {
             client = new FireSharp.FirebaseClient(config);
             FirebaseResponse response = await client.GetAsync($"Users/{userName}");
             var result = JsonConvert.DeserializeObject<User>(response.Body);
-            return result;                  
+            return result;
         }
         public async Task<bool> IsUsernameInDb(string userName)
         {
@@ -111,10 +111,10 @@ namespace API.Services
             var result = JsonConvert.DeserializeObject<User>(response.Body);
             if (result.Password == userCredentials.Password)
             {
-               return "ok";
+                return "ok";
             }
-               return "wrong password";          
-            
+            return "wrong password";
+
         }
         public async void UpdatePassword(UserCredentials userCredentials)
         {
@@ -123,6 +123,26 @@ namespace API.Services
             var result = JsonConvert.DeserializeObject<User>(response.Body);
             result.Password = userCredentials.Password;
             SetResponse setResponse = await client.SetAsync("Users/" + result.UserName, result);
+        }
+        // ------- Roles
+        public async void AddRoleToDb(Role role)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            SetResponse setResponse = await client.SetAsync("Roles/" + role.Name, role);
+        }
+        public async Task<Role> GetRoleFromDb(string roleName)
+        {
+            client = new FireSharp.FirebaseClient(config);
+            FirebaseResponse response = await client.GetAsync($"Roles/{roleName}");
+            var result = JsonConvert.DeserializeObject<Role>(response.Body);
+            return result;
+        }
+        public async Task<List<Role>> GetAllRolesFromDb()
+        {
+            client = new FireSharp.FirebaseClient(config);
+            FirebaseResponse response = await client.GetAsync($"Roles");
+            var result = JsonConvert.DeserializeObject<List<Role>>(response.Body);
+            return result;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePassword)
         {
             string res = await dbService.AreCredentialsOk(new UserCredentials { UserName = changePassword.UserName, Password = changePassword.Password});
