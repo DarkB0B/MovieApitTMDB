@@ -74,7 +74,7 @@ namespace API.Services
         }
 
         //-------User
-        public async void AddUserToDb(User user)
+        public async void AddUserToDb(UserCredentials user)
         {
             client = new FireSharp.FirebaseClient(config);
             SetResponse setResponse = await client.SetAsync("Users/" +  user.UserName, user);

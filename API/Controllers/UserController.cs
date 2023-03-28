@@ -12,7 +12,7 @@ namespace API.Controllers
         DbService dbService = new DbService();
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] UserCredentials user)
         {
             if (await dbService.IsUsernameInDb(user.UserName) == true)
             {
@@ -20,6 +20,20 @@ namespace API.Controllers
             }
             dbService.AddUserToDb(user);
             return Ok();
+        }
+        [HttpPut]
+        public async Task<IActionResult> ChangePassword([FromBody] UserCredentials userCredentials, string newPassword)
+        {
+            string res = await dbService.AreCredentialsOk(userCredentials);
+            if (res == "ok")
+            {
+                dbService.AddUserToDb(new UserCredentials { UserName = userCredentials.UserName, Password = newPassword});
+                return Ok("Password Changed");
+            }
+            else
+            {
+                return BadRequest(res);
+            }
         }
     }
 }
