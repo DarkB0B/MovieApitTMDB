@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using APIef.Models;
 using APIef.Services;
+using APIef.Interface;
 
 namespace APIef.Controllers
 {
@@ -10,11 +11,11 @@ namespace APIef.Controllers
     [ApiController]
     public class MovieCollectionsController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IMovieCollections _IMovieCollections;
 
-        public MovieCollectionsController(DataContext context)
+        public MovieCollectionsController(IMovieCollections IMovieCollection)
         {
-            _context = context;
+            _IMovieCollections = IMovieCollection;
         }
 
         [HttpGet]
@@ -22,7 +23,7 @@ namespace APIef.Controllers
         {
             try
             {
-                MovieCollection movieCollection = await dbService.GetMovieCollectionFromDb(collectionId);
+                MovieCollection movieCollection = await Task.FromResult(_IMovieCollections.GetMovieCollection(collectionId));
                 return new JsonResult(movieCollection);
             }
             catch (Exception ex)
@@ -37,7 +38,7 @@ namespace APIef.Controllers
         {
             try
             {
-                List<MovieCollection> movieCollectionList = await dbService.GetAllMovieCollectionsFromDb();
+                List<MovieCollection> movieCollectionList = await Task.FromResult(_IMovieCollections.GetMovieCollections());
                 return new JsonResult(movieCollectionList);
             }
             catch (Exception ex)

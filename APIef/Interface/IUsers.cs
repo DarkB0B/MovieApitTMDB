@@ -1,6 +1,6 @@
 ﻿using APIef.Models;
 
-namespace APIef.Repository
+namespace APIef.Interface
 {
     public interface IUsers
     {

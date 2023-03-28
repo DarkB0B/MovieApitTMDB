@@ -20,7 +20,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("All")]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
 
             return Ok("Get");

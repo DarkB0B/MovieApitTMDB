@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using APIef.Models;
 using APIef.Services;
 using APIef.Data;
+using APIef.Interface;
 
 namespace APIef.Controllers
 {
@@ -12,11 +13,12 @@ namespace APIef.Controllers
     public class RoomsController : ControllerBase
     {
 
-        private readonly DataContext _context;
+        private readonly IRooms _IRoom;
 
-        public RoomsController(DataContext context)
+        public RoomsController(IRooms IRoom)
         {
-            _context = context;
+            
+            _IRoom = IRoom;
         }
         [HttpPost]
         public IActionResult Post() //add room to db
@@ -30,9 +32,9 @@ namespace APIef.Controllers
             };
             try
             {
-                if(dbService.GetRoomFromDb(room.Id) == null)
+                if(_IRoom.RoomExists(room.Id) == false)
                 {
-                    dbService.AddRoomToDb(room);
+                    _IRoom.AddRoom(room);
                     return Ok(room);
                 }
 
@@ -51,9 +53,9 @@ namespace APIef.Controllers
         {
             try
             {
-                Room room = await dbService.GetRoomFromDb(Id);
+                Room room = await Task.FromResult(_IRoom.GetRoom(Id));
                 room.UsersInRoom++;
-                dbService.UpdateRoomInDb(room);
+                _IRoom.UpdateRoom(room);
                 return Ok();
             }
             catch (Exception ex)
@@ -67,16 +69,16 @@ namespace APIef.Controllers
         {
             try
             {
-                Room room = await dbService.GetRoomFromDb(Id);
+                Room room = await Task.FromResult(_IRoom.GetRoom(Id));
                 if (room.IsStarted == true && room.IsCompleted == false)
                 {
-                    room.MovieLists.Add(movies);
+                    room.MovieLists.Add(new MovieList {Id = room.MovieLists.Count + 1, Movies =  movies });
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {                      
                         room.IsCompleted = true;
                         return  Ok("Picking Phase Completed");
                     }
-                    dbService.UpdateRoomInDb(room);
+                    _IRoom.UpdateRoom(room);
                     return Ok("MovieList Updated");
                 }
                 return BadRequest();
@@ -90,7 +92,7 @@ namespace APIef.Controllers
         [Route("IsCompleted")]
         public async Task<JsonResult> IsCompleted(string Id) //check if picking phase is completed
         {
-            Room room = await dbService.GetRoomFromDb(Id);
+            Room room = await Task.FromResult(_IRoom.GetRoom(Id));
             if(room.IsCompleted == true)
             {
                 return new JsonResult("true");
@@ -104,7 +106,7 @@ namespace APIef.Controllers
         {
             try
             {
-                Room room = await dbService.GetRoomFromDb(Id);
+                Room room = await Task.FromResult(_IRoom.GetRoom(Id));
                 return Ok(room);
             }
             catch (Exception ex)
@@ -117,7 +119,7 @@ namespace APIef.Controllers
         {
             try
             {
-                dbService.UpdateRoomInDb(room);
+                _IRoom.UpdateRoom(room);
                 return Ok(room);
             }
             catch (Exception ex)
@@ -129,7 +131,7 @@ namespace APIef.Controllers
         [Route("IsStarted")] //check if room is started
         public async Task<JsonResult> IsStarted(string Id)
         {
-            Room room = await dbService.GetRoomFromDb(Id);
+            Room room = await Task.FromResult(_IRoom.GetRoom(Id));
             if(room.IsStarted == true)
             {
                 return new JsonResult("true");
@@ -143,11 +145,11 @@ namespace APIef.Controllers
             try
             {
                 
-                Room room = await dbService.GetRoomFromDb(Id);
+                Room room = await Task.FromResult(_IRoom.GetRoom(Id));
                 if (room.UsersInRoom >= 2)
                 {
                     room.IsStarted = true;
-                    dbService.UpdateRoomInDb(room);
+                    _IRoom.UpdateRoom(room);
                     return Ok(room);
 
                 }
@@ -162,13 +164,13 @@ namespace APIef.Controllers
         [Route("MovieList")]
         public async Task<JsonResult> GetMovieList(string Id) 
         {
-            Room room = await dbService.GetRoomFromDb(Id);
+            Room room = await Task.FromResult(_IRoom.GetRoom(Id));
             double treshold = room.MovieLists.Count * 0.7;
             Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
 
-            foreach(List<Movie> movieList in room.MovieLists)
+            foreach(MovieList movieList in room.MovieLists)
             {
-                foreach(Movie obj in movieList)
+                foreach(Movie obj in movieList.Movies)
                 {
                     if (objCount.ContainsKey(obj))
                     {

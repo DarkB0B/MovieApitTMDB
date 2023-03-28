@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socket", "Socket\Socket.csproj", "{7B91BE40-FF2A-49FB-A2D3-696ABC8F5E22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Socket", "Socket\Socket.csproj", "{7B91BE40-FF2A-49FB-A2D3-696ABC8F5E22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{AA66846F-D713-40C6-8BD4-4750DF5F88F9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIef", "APIef\APIef.csproj", "{8519C5F1-97D5-4374-B7B0-1A714AE439F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIef", "APIef\APIef.csproj", "{8519C5F1-97D5-4374-B7B0-1A714AE439F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		{7B91BE40-FF2A-49FB-A2D3-696ABC8F5E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B91BE40-FF2A-49FB-A2D3-696ABC8F5E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B91BE40-FF2A-49FB-A2D3-696ABC8F5E22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA66846F-D713-40C6-8BD4-4750DF5F88F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA66846F-D713-40C6-8BD4-4750DF5F88F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA66846F-D713-40C6-8BD4-4750DF5F88F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA66846F-D713-40C6-8BD4-4750DF5F88F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8519C5F1-97D5-4374-B7B0-1A714AE439F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8519C5F1-97D5-4374-B7B0-1A714AE439F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8519C5F1-97D5-4374-B7B0-1A714AE439F2}.Release|Any CPU.ActiveCfg = Release|Any CPU

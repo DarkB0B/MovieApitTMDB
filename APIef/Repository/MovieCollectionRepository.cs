@@ -1,4 +1,5 @@
 ﻿using APIef.Data;
+using APIef.Interface;
 using APIef.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +33,7 @@ namespace APIef.Repository
         {
             try
             {
-                MovieCollection movieCollection = _context.MovieCollections.Find(id);
+                MovieCollection? movieCollection = _context.MovieCollections.Find(id);
                 if (movieCollection != null)
                 {
                     _context.MovieCollections.Remove(movieCollection);
@@ -67,7 +68,7 @@ namespace APIef.Repository
             }
         }
 
-        public List<MovieCollection> GetMoviesCollections()
+        public List<MovieCollection> GetMovieCollections()
         {
             try
             {

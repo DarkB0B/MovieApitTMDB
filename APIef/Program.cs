@@ -5,6 +5,8 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using APIef.Data;
+using APIef.Interface;
+using APIef.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,9 @@ builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     }
 );
+builder.Services.AddTransient<IUsers, UserRepository>();
+builder.Services.AddTransient<IRooms, RoomRepository>();
+builder.Services.AddTransient<IMovieCollections, MovieCollectionRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

@@ -1,7 +1,4 @@
-﻿using FireSharp;
-using FireSharp.Config;
-using FireSharp.Interfaces;
-using FireSharp.Response;
+﻿
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -22,11 +19,11 @@ namespace APIef.Controllers
 
 
         readonly ExternalApiService externalApiService = new ExternalApiService();
-        private readonly DataContext _context;
+ 
 
-        public MoviesController(DataContext context)
+        public MoviesController()
         {
-            _context = context;
+            
         }
 
 

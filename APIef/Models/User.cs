@@ -9,7 +9,7 @@ namespace APIef.Models
         public string UserName { get; set; }
         public bool IsPremium { get; set; } = false;
         public string Password { get; set; }
-        public Role Role { get; set; }
+        public Role Role { get; set; } 
         
     }
 }

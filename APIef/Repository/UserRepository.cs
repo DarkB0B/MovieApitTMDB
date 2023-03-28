@@ -1,4 +1,5 @@
 ﻿using APIef.Data;
+using APIef.Interface;
 using APIef.Models;
 
 namespace APIef.Repository
@@ -14,13 +15,18 @@ namespace APIef.Repository
         public void AddUser(User user)
         {
             try
-            {
+            {             
+                Role? role = _context.Roles.Find(1);
+                if (role != null)
+                {
+                    user.Role = role;
+                }
                 _context.Users.Add(user);
                 _context.SaveChanges();
             }
-            catch (Exception e)
+            catch 
             {
-                Console.WriteLine(e.Message);
+                throw;
             }
         }
 
@@ -118,8 +124,7 @@ namespace APIef.Repository
                 {                   
                         user.Password = userCredentials.Password;
                         _context.Users.Update(user);
-                        _context.SaveChanges();
-                    
+                        _context.SaveChanges();                    
                 }
                 else
                 {

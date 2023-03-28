@@ -1,5 +1,5 @@
-﻿using APIef.Models;
-using APIef.Repository;
+﻿using APIef.Interface;
+using APIef.Models;
 using APIef.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
