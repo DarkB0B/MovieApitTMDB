@@ -1,4 +1,5 @@
 ﻿using APIef.Models;
+using APIef.Repository;
 using APIef.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,17 +14,20 @@ namespace APIef.Controllers
     {
         
         private readonly IConfiguration _configuration;
+        private readonly IUsers _IUser;
 
-        public TokenController(IConfiguration configuration) 
+        public TokenController(IConfiguration configuration, IUsers IUser) 
         {
             _configuration = configuration;
+            _IUser = IUser;
         }
 
         [HttpPost]
-        public JsonResult GetToken(UserCredentials user)
+        public JsonResult GetToken(UserCredentials userCredentials)
         {
-            if (user != null && user.Password != null && user.UserName != null)
+            if (userCredentials != null && userCredentials.Password != null && userCredentials.UserName != null)
             {
+                User user =_IUser.GetUser(userCredentials.UserName);
                 List<Claim> claims = new List<Claim>
                 {
                         new Claim(ClaimTypes.Name, user.UserName),
@@ -33,7 +37,7 @@ namespace APIef.Controllers
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
                 var token = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(15),
+                    expires: DateTime.Now.AddMinutes(45),
                     signingCredentials: creds);
                 var jwt = new JwtSecurityTokenHandler().WriteToken(token);
                 
