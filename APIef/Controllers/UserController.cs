@@ -25,7 +25,7 @@ namespace APIef.Controllers
             {
                 return BadRequest("Username Is Already Taken");
             }
-            dbService.AddUserToDb(user);
+            _context.Add(user);
             return Ok();
         }
         [HttpPut]
