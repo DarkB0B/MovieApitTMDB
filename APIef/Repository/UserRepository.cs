@@ -20,7 +20,7 @@ namespace APIef.Repository
                 if (role != null)
                 {
                     user.Role = role;
-                }
+                }              
                 _context.Users.Add(user);
                 _context.SaveChanges();
             }
@@ -37,6 +37,15 @@ namespace APIef.Repository
                 User? user = _context.Users.Find(userName);
                 if (user != null)
                 {
+                    Role? role = _context.Roles.Find(user.RoleId);
+                    if (role != null)
+                    {
+                        user.Role = role;
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException("Role is null");
+                    }
                     return user;
                 }
                 throw new ArgumentNullException();

@@ -1,4 +1,5 @@
-﻿using APIef.Interface;
+﻿using APIef.Data;
+using APIef.Interface;
 using APIef.Models;
 using APIef.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace APIef.Controllers
         
         private readonly IConfiguration _configuration;
         private readonly IUsers _IUser;
+        private readonly DataContext _dbContext;
 
-        public TokenController(IConfiguration configuration, IUsers IUser) 
+        public TokenController(IConfiguration configuration, IUsers IUser, DataContext dbContext) 
         {
             _configuration = configuration;
             _IUser = IUser;
+            _dbContext = dbContext;
         }
 
         [HttpPost]
@@ -28,6 +31,11 @@ namespace APIef.Controllers
             if (userCredentials != null && userCredentials.Password != null && userCredentials.UserName != null)
             {
                 User user =_IUser.GetUser(userCredentials.UserName);
+                
+                if (user.Role == null)
+                {
+                    return new JsonResult(BadRequest("Incorrect User Data"));
+                }
                 List<Claim> claims = new List<Claim>
                 {
                         new Claim(ClaimTypes.Name, user.UserName),

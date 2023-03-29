@@ -30,6 +30,9 @@ namespace APIef.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -41,14 +44,14 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.Movie", b =>
                 {
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BackdropPath")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<int>("Likes")
                         .HasColumnType("int");
@@ -76,13 +79,17 @@ namespace APIef.Migrations
                     b.Property<string>("Runtime")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("VoteAvredge")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VoteCount")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Title");
+                    b.HasKey("Id");
 
                     b.HasIndex("MovieListId");
 

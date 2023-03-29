@@ -5,6 +5,7 @@ namespace APIef.Models
     public class Movie
     {
         [Key]
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }
         public string PosterPath { get; set; } = string.Empty;
@@ -15,7 +16,6 @@ namespace APIef.Models
         public string? VoteCount { get; set; }
         public string? Popularity { get; set; }
         public string? Runtime { get; set; }
-        public int Id { get; set; }
         public int Likes { get; set; }
     }
 }
