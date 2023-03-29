@@ -44,5 +44,11 @@ namespace APIef.Controllers
                 return BadRequest(res);
             }
         }
+        [HttpGet]
+        public async Task<JsonResult> GetUser(string userName)
+        {
+            User user = await Task.FromResult(_IUser.GetUser(userName));
+            return new JsonResult(user);
+        }
     }
 }

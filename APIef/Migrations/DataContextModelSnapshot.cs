@@ -138,17 +138,17 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.Role", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("RoleId");
 
                     b.ToTable("Roles");
                 });

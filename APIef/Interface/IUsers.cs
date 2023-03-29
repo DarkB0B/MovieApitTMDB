@@ -11,5 +11,6 @@ namespace APIef.Interface
         public bool UserExists(string userName);
         public string CheckCredentials(UserCredentials userCredentials);
         public void ChangePassword(UserCredentials userCredentials);
+        public List<User> GetUsers();
     }
 }

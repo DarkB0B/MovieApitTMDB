@@ -10,8 +10,6 @@ namespace APIef.Models
         public string UserName { get; set; }
         public bool IsPremium { get; set; } = false;
         public string Password { get; set; }
-        [ForeignKey("RoleId")]
-        public Role Role { get; set; }     
-        public int RoleId { get; set; } = 1;
+        public  Role Role { get; set; }     
     }
 }

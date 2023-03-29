@@ -1,6 +1,7 @@
 ﻿using APIef.Data;
 using APIef.Interface;
 using APIef.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace APIef.Repository
 {
@@ -20,7 +21,8 @@ namespace APIef.Repository
                 if (role != null)
                 {
                     user.Role = role;
-                }              
+                }
+                
                 _context.Users.Add(user);
                 _context.SaveChanges();
             }
@@ -34,19 +36,12 @@ namespace APIef.Repository
         {
             try
             {
-                User? user = _context.Users.Find(userName);
+                User? user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.UserName == userName);
+
                 if (user != null)
                 {
-                    Role? role = _context.Roles.Find(user.RoleId);
-                    if (role != null)
-                    {
-                        user.Role = role;
-                    }
-                    else
-                    {
-                        throw new ArgumentNullException("Role is null");
-                    }
-                    return user;
+                   
+                   return user;
                 }
                 throw new ArgumentNullException();
             }
@@ -139,6 +134,18 @@ namespace APIef.Repository
                 {
                     throw new ArgumentException("User Does Not Exist");
                 }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<User> GetUsers()
+        {
+            try
+            {
+                return _context.Users.Include(u => u.Role).ToList();
             }
             catch
             {

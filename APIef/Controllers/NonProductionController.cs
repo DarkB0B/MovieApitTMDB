@@ -44,9 +44,9 @@ namespace APIef.Controllers
         public IActionResult PostGenres()
         {
             List<Role> roles = new List<Role>();
-            Role r1 = new Role { Name = "Regular", Id = 0 };
-            Role r2 = new Role { Name = "Premium", Id = 0 };
-            Role r3 = new Role { Name = "Admin", Id = 0 };
+            Role r1 = new Role { Name = "Regular", RoleId = 0 };
+            Role r2 = new Role { Name = "Premium", RoleId = 0 };
+            Role r3 = new Role { Name = "Admin", RoleId = 0 };
             roles.Add(r1);
             roles.Add(r2);
             roles.Add(r3);
@@ -62,6 +62,7 @@ namespace APIef.Controllers
         public JsonResult GetUsers() 
         {
             List<User> users = _dbContext.Users.ToList();
+            
             return new JsonResult(users);
         }
         [HttpGet]

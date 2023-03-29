@@ -30,7 +30,9 @@ namespace APIef.Repository
         {
             try
             {
-                Room? room = _context.Rooms.Find(roomId);
+                Room? room = _context.Rooms.Include(r => r.MovieLists)
+                            .ThenInclude(ml => ml.Movies)
+                            .FirstOrDefault(r => r.Id == roomId); 
                 if (room != null)
                 {
                     return room;

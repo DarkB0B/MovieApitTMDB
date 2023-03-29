@@ -6,6 +6,6 @@ namespace APIef.Models
     {
         [Key]
         public int Id { get; set; }
-        public List<Movie> Movies { get; set; }
+        public List<Movie> Movies { get; set; } = new List<Movie>();
     }
 }

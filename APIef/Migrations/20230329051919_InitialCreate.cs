@@ -41,13 +41,13 @@ namespace APIef.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,7 +80,7 @@ namespace APIef.Migrations
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "Id",
+                        principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
