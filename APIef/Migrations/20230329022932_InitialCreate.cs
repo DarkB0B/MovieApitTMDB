@@ -28,11 +28,13 @@ namespace APIef.Migrations
                 name: "MovieCollections",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_MovieCollections", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,11 +119,17 @@ namespace APIef.Migrations
                     Popularity = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Runtime = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Likes = table.Column<int>(type: "int", nullable: false),
+                    MovieCollectionId = table.Column<int>(type: "int", nullable: true),
                     MovieListId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Movies", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Movies_MovieCollections_MovieCollectionId",
+                        column: x => x.MovieCollectionId,
+                        principalTable: "MovieCollections",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Movies_MovieLists_MovieListId",
                         column: x => x.MovieListId,
@@ -133,6 +141,11 @@ namespace APIef.Migrations
                 name: "IX_MovieLists_RoomId",
                 table: "MovieLists",
                 column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movies_MovieCollectionId",
+                table: "Movies",
+                column: "MovieCollectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Movies_MovieListId",
@@ -152,13 +165,13 @@ namespace APIef.Migrations
                 name: "Genres");
 
             migrationBuilder.DropTable(
-                name: "MovieCollections");
-
-            migrationBuilder.DropTable(
                 name: "Movies");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "MovieCollections");
 
             migrationBuilder.DropTable(
                 name: "MovieLists");

@@ -64,6 +64,25 @@ namespace APIef.Controllers
             List<User> users = _dbContext.Users.ToList();
             return new JsonResult(users);
         }
+        [HttpGet]
+        [Route("CreateMovieCollecitionAndSaveInDb")]
+        public async Task<JsonResult> Get()
+        {
+            int genre = 14;
+            List<Movie> movies = new List<Movie>();
+
+            movies = await externalApiService.GetMoviesPerGenre(genre);
+
+            MovieCollection movieCollection = new MovieCollection();
+            movieCollection.Movies = movies;
+            movieCollection.Title = "Action";
+            movieCollection.Id = 0;
+            _dbContext.MovieCollections.Add(movieCollection);
+            _dbContext.SaveChanges();
+
+                        
+            return new JsonResult(movieCollection);
+        }
 
     }
 }

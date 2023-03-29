@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIef.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230329021649_InitialCreate")]
+    [Migration("20230329022932_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -59,6 +59,9 @@ namespace APIef.Migrations
                     b.Property<int>("Likes")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MovieCollectionId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("MovieListId")
                         .HasColumnType("int");
 
@@ -94,6 +97,8 @@ namespace APIef.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MovieCollectionId");
+
                     b.HasIndex("MovieListId");
 
                     b.ToTable("Movies");
@@ -102,11 +107,16 @@ namespace APIef.Migrations
             modelBuilder.Entity("APIef.Models.MovieCollection", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("MovieCollections");
                 });
@@ -189,6 +199,10 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.Movie", b =>
                 {
+                    b.HasOne("APIef.Models.MovieCollection", null)
+                        .WithMany("Movies")
+                        .HasForeignKey("MovieCollectionId");
+
                     b.HasOne("APIef.Models.MovieList", null)
                         .WithMany("Movies")
                         .HasForeignKey("MovieListId");
@@ -210,6 +224,11 @@ namespace APIef.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("APIef.Models.MovieCollection", b =>
+                {
+                    b.Navigation("Movies");
                 });
 
             modelBuilder.Entity("APIef.Models.MovieList", b =>
