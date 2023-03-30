@@ -19,7 +19,7 @@ namespace APIef.Controllers
         [HttpPost]
         public IActionResult AddRole([FromBody] string role)
         {
-            _context.Roles.Add(new Role { Name = role, RoleId = 0 });
+            _context.Roles.AddAsync(new Role { Name = role, RoleId = 0 });
             _context.SaveChanges();
             return Ok();
         }

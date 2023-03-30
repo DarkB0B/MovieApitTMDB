@@ -11,40 +11,49 @@ namespace APIef.Controllers
     [ApiController]
     public class MovieCollectionsController : ControllerBase
     {
-        private readonly IMovieCollections _IMovieCollections;
+        private readonly IMovieCollections _movieCollectionsService;
 
-        public MovieCollectionsController(IMovieCollections IMovieCollection)
+        public MovieCollectionsController(IMovieCollections movieCollectionsService)
         {
-            _IMovieCollections = IMovieCollection;
+            _movieCollectionsService = movieCollectionsService;
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetMovieCollection(int collectionId)
+        // GET api/movie-collections/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
-                MovieCollection movieCollection = await Task.FromResult(_IMovieCollections.GetMovieCollection(collectionId));
-                return new JsonResult(movieCollection);
+                MovieCollection movieCollection = await Task.FromResult(_movieCollectionsService.GetMovieCollection(id));
+
+                if (movieCollection == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(movieCollection);
             }
             catch (Exception ex)
             {
-                return new JsonResult(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
         }
+
+        // GET api/movie-collections
         [HttpGet]
-        [Route("All")]
-        public async Task<JsonResult> GetMovieCollections()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                List<MovieCollection> movieCollectionList = await Task.FromResult(_IMovieCollections.GetMovieCollections());
-                return new JsonResult(movieCollectionList);
+                List<MovieCollection> movieCollections = await Task.FromResult(_movieCollectionsService.GetMovieCollections());
+
+                return Ok(movieCollections);
             }
             catch (Exception ex)
             {
-                return new JsonResult($"{ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }
 }
+

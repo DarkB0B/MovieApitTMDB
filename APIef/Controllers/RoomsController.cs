@@ -141,7 +141,7 @@ namespace APIef.Controllers
             {
                 Room room = await _roomService.GetRoomAsync(id);
                 room.UsersInRoom++;
-                await _roomService.UpdateRoomAsync(room);
+                 _roomService.UpdateRoom(room);
                 return Ok();
             }
             catch (Exception ex)
@@ -150,16 +150,13 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("AddMovieListToRoom")]
-        public async Task<IActionResult>
-            AddMovieListToRoom([FromBody] List<Movie> movies,
-                string Id) //if last user added a movie it returns "completed" so app can recognize when it ended
+        [HttpPost("{id}/movieLists")]
+        public async Task<IActionResult> AddMovieListToRoom(string id, [FromBody] List<Movie> movies) //add movie list to room
         {
             try
             {
-                Room room = await Task.FromResult(_IRoom.GetRoom(Id));
-                if (room.IsStarted == true && room.IsCompleted == false)
+                Room room = await _roomService.GetRoomAsync(id);
+                if (room.IsStarted && !room.IsCompleted)
                 {
                     room.MovieLists.Add(new MovieList { Id = room.MovieLists.Count + 1, Movies = movies });
                     if (room.MovieLists.Count == room.UsersInRoom)
@@ -167,11 +164,9 @@ namespace APIef.Controllers
                         room.IsCompleted = true;
                         return Ok("Picking Phase Completed");
                     }
-
-                    _IRoom.UpdateRoom(room);
+                    await _roomService.UpdateRoomAsync(room);
                     return Ok("MovieList Updated");
                 }
-
                 return BadRequest();
             }
             catch (Exception ex)
@@ -180,16 +175,14 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("IsCompleted")]
-        public async Task<JsonResult> IsCompleted(string Id) //check if picking phase is completed
+        [HttpGet("{id}/isCompleted")]
+        public async Task<JsonResult> IsCompleted(string id) //check if picking phase is completed
         {
-            Room room = await Task.FromResult(_IRoom.GetRoom(Id));
-            if (room.IsCompleted == true)
+            Room room = await _roomService.GetRoomAsync(id);
+            if (room.IsCompleted)
             {
                 return new JsonResult("true");
             }
-
             return new JsonResult("false");
         }
     }
