@@ -14,14 +14,14 @@ namespace APIef.Migrations
                 name: "Genres",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    dbId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    tmdbId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genres", x => x.Id);
+                    table.PrimaryKey("PK_Genres", x => x.dbId);
                 });
 
             migrationBuilder.CreateTable(

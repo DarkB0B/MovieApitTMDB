@@ -1,5 +1,6 @@
 ﻿using APIef.Data;
 using APIef.Models;
+using APIef.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace APIef.Controllers
     [ApiController]
     public class GenresController : ControllerBase
     {
+        readonly ExternalApiService externalApiService = new ExternalApiService();
         private readonly DataContext _dbContext;
         public GenresController(DataContext context)
         {
@@ -18,7 +20,7 @@ namespace APIef.Controllers
         [HttpGet]
         public async Task<JsonResult> GetGenres()
         {
-            return new JsonResult(Ok(_dbContext.Genres));
+            return new JsonResult(Ok(await Task.FromResult(_dbContext.Genres.ToList())));
         }
         [HttpPost]
         public async Task<JsonResult> AddGenre([FromBody] Genre genre)
@@ -27,6 +29,26 @@ namespace APIef.Controllers
             _dbContext.SaveChanges();
             return new JsonResult(Ok());
         }
-        
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<JsonResult> GetAllGenres()
+        {
+            List<Genre> genres = await Task.FromResult(_dbContext.Genres.ToList());
+            return new JsonResult(genres);
+        }
+        [HttpPost]
+        [Route("SaveAll")]
+        public async Task<JsonResult> SaveGenres()
+        {
+
+            List<Genre> genres = await externalApiService.GetGenres();
+            foreach (var genre in genres)
+            {
+                _dbContext.Genres.Add(genre);
+            }
+            _dbContext.SaveChanges();
+            return new JsonResult(genres);
+        }
+
     }   
 }

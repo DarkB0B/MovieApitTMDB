@@ -32,9 +32,10 @@ namespace APIef.Services
                 {
                     genres.Add(new Genre
                     {
-                        Id = item.id,
+                        dbId = 0,
+                        tmdbId = item.id,
                         Name = item.name
-                    });
+                    }); 
                 }
                 return genres;
             }

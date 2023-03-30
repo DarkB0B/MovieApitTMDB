@@ -24,20 +24,20 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.Genre", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("dbId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("dbId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("tmdbId")
+                        .HasColumnType("int");
+
+                    b.HasKey("dbId");
 
                     b.ToTable("Genres");
                 });

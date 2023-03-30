@@ -28,16 +28,54 @@ namespace APIef.Controllers
 
 
         [HttpGet]
-        public async Task<JsonResult> Get([FromBody] List<int> genreList)
+        public async Task<JsonResult> Get([FromBody] List<int> genreList, int requestedCount)
         {
-            
-            List<Movie> movies = new List<Movie>();
+            List<Movie> result = new List<Movie>();
+
+            // Determine how many movies to get for each genre based on the requested count
+            int moviesPerGenre = requestedCount / genreList.Count;
+
             foreach (int genreId in genreList)
             {
-                movies = await externalApiService.GetMoviesPerGenre(genreId);               
+                // Get 12 movies for the current genre
+                List<Movie> moviesForGenre = await externalApiService.GetMoviesPerGenre(genreId);
+
+                // Add up to `moviesPerGenre` movies from the current genre to the result list
+                int moviesAdded = 0;
+                foreach (Movie movie in moviesForGenre)
+                {
+                        
+                    result.Add(movie);
+                    moviesAdded++;
+
+                    if (moviesAdded >= moviesPerGenre)
+                    {
+                       break;
+                    }
+                    
+                }
+
+                // If we couldn't find enough movies for the current genre, add as many as we can
+                while (moviesAdded < moviesPerGenre && moviesForGenre.Any())
+                {
+                    Movie movieToAdd = moviesForGenre.First();
+                    moviesForGenre.RemoveAt(0);
+
+                    
+                     result.Add(movieToAdd);
+                     moviesAdded++;
+
+                }
+
+                // If we still don't have enough movies, break out of the loop
+                if (result.Count >= requestedCount)
+                {
+                    break;
+                }
             }
-            //randomly choose some movies from movies list                 
-            return new JsonResult(movies);
+
+            return new JsonResult(result);
+
         }
         [HttpGet]
         [Route("GetMoviePerGenreTest")]

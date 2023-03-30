@@ -20,25 +20,7 @@ namespace APIef.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet]
-        [Route("GetGenres")]
-        public async Task<JsonResult> GetGenres()
-        {
-            List<Genre> genres = await externalApiService.GetGenres();
-            return new JsonResult(genres);
-        }
-        [HttpGet]
-        [Route("SaveGenres")]
-        public async Task<JsonResult> SaveGenres()
-        {
-            List<Genre> genres = await externalApiService.GetGenres();
-            foreach (var genre in genres) 
-            {
-                _dbContext.Genres.Add(genre);
-            }
-            _dbContext.SaveChanges();
-            return new JsonResult(genres);
-        }
+        
         [HttpPost]
         [Route("SaveRoles")]
         public IActionResult PostGenres()
