@@ -12,7 +12,7 @@ namespace APIef.Controllers
     public class MovieCollectionsController : ControllerBase
     {
         private readonly IMovieCollections _movieCollectionsService;
-
+        readonly ExternalApiService externalApiService = new ExternalApiService();
         public MovieCollectionsController(IMovieCollections movieCollectionsService)
         {
             _movieCollectionsService = movieCollectionsService;
@@ -60,6 +60,23 @@ namespace APIef.Controllers
         {
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
             return Ok();
+        }
+        [HttpGet]
+        [Route("CreateMovieCollecitionAndSaveInDb")]
+        public async Task<JsonResult> Get()
+        {
+            int genre = 14;
+            List<Movie> movies = new List<Movie>();
+
+            movies = await externalApiService.GetMoviesPerGenre(genre);
+
+            MovieCollection movieCollection = new MovieCollection();
+            movieCollection.Movies = movies;
+            movieCollection.Title = "Action";
+            movieCollection.Id = 0;
+            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
+
+            return new JsonResult(movieCollection);
         }
     }
 }

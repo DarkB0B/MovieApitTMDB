@@ -21,51 +21,9 @@ namespace APIef.Controllers
         }
 
         
-        [HttpPost]
-        [Route("SaveRoles")]
-        public IActionResult SaveRoles()
-        {
-            List<Role> roles = new List<Role>();
-            Role r1 = new Role { Name = "Regular", RoleId = 0 };
-            Role r2 = new Role { Name = "Premium", RoleId = 0 };
-            Role r3 = new Role { Name = "Admin", RoleId = 0 };
-            roles.Add(r1);
-            roles.Add(r2);
-            roles.Add(r3);
-            foreach (var role in roles)
-            {
-                _dbContext.Roles.Add(role);
-            }
-            _dbContext.SaveChanges();
-            return Ok();
-        }
-        [HttpGet]
-        [Route("GetUsers")]
-        public JsonResult GetUsers() 
-        {
-            List<User> users = _dbContext.Users.ToList();
-            
-            return new JsonResult(users);
-        }
-        [HttpGet]
-        [Route("CreateMovieCollecitionAndSaveInDb")]
-        public async Task<JsonResult> Get()
-        {
-            int genre = 14;
-            List<Movie> movies = new List<Movie>();
-
-            movies = await externalApiService.GetMoviesPerGenre(genre);
-
-            MovieCollection movieCollection = new MovieCollection();
-            movieCollection.Movies = movies;
-            movieCollection.Title = "Action";
-            movieCollection.Id = 0;
-            _dbContext.MovieCollections.Add(movieCollection);
-            _dbContext.SaveChanges();
-
-                        
-            return new JsonResult(movieCollection);
-        }
+        
+        
+        
         
 
     }

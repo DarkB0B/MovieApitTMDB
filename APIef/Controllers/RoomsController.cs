@@ -122,12 +122,25 @@ namespace APIef.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Room room)
+        public async Task<IActionResult> Post()
         {
+            Room room = new Room
+            {
+                Id = CodeGenerator.RandomString(5),
+                UsersInRoom = 1,
+                IsStarted = false,
+                IsCompleted = false,
+            };
             try
             {
+                while(_roomService.RoomExists(room.Id) == true)
+                {
+                    room.Id = CodeGenerator.RandomString(5);
+                }
+             
                 await _roomService.AddRoomAsync(room);
-                return Ok(room);
+                return Ok(room);   
+                
             }
             catch (Exception ex)
             {

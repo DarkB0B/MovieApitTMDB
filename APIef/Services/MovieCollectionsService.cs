@@ -52,7 +52,8 @@ namespace APIef.Services
         {
             try
             {
-                MovieCollection? movieCollection = _context.MovieCollections.Find(id);
+                MovieCollection? movieCollection = _context.MovieCollections.Include(mc => mc.Movies)
+            .FirstOrDefault(mc => mc.Id == id);
                 if (movieCollection != null)
                 {
                     return movieCollection;
@@ -72,7 +73,8 @@ namespace APIef.Services
         {
             try
             {
-                return _context.MovieCollections.ToList();
+                return _context.MovieCollections.Include(mc => mc.Movies).ToList();
+                
             }
             catch
             {
@@ -137,7 +139,8 @@ namespace APIef.Services
         {
             try
             {
-                MovieCollection movieCollection = await _context.MovieCollections.FindAsync(id);
+                MovieCollection? movieCollection = await _context.MovieCollections.Include(mc => mc.Movies)
+            .FirstOrDefaultAsync(mc => mc.Id == id);
                 if (movieCollection != null)
                 {
                     return movieCollection;
@@ -157,7 +160,8 @@ namespace APIef.Services
         {
             try
             {
-                return await _context.MovieCollections.ToListAsync();
+                return await _context.MovieCollections.Include(mc => mc.Movies).ToListAsync();
+
             }
             catch
             {

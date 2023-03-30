@@ -107,11 +107,10 @@ namespace APIef.Migrations
                 name: "Movies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Overview = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PosterPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PosterPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReleaseDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BackdropPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OriginalTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),

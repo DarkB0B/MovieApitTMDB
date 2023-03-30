@@ -44,11 +44,8 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.Movie", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BackdropPath")
                         .HasColumnType("nvarchar(max)");
@@ -73,7 +70,6 @@ namespace APIef.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PosterPath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReleaseDate")
