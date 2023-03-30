@@ -54,6 +54,13 @@ namespace APIef.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        // POST api/movie-collections
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
+        {
+            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
+            return Ok();
+        }
     }
 }
 

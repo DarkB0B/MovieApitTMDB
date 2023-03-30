@@ -10,12 +10,12 @@ namespace APIef.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NonProductionController : ControllerBase
+    public class TEST : ControllerBase
     {
         ExternalApiService externalApiService = new ExternalApiService();
         DataContext _dbContext;
 
-        public NonProductionController (DataContext dbContext)
+        public TEST (DataContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -23,7 +23,7 @@ namespace APIef.Controllers
         
         [HttpPost]
         [Route("SaveRoles")]
-        public IActionResult PostGenres()
+        public IActionResult SaveRoles()
         {
             List<Role> roles = new List<Role>();
             Role r1 = new Role { Name = "Regular", RoleId = 0 };

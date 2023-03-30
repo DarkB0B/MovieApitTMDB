@@ -64,7 +64,7 @@ namespace APIef.Controllers
 
             return Ok(false);
         }
-
+        //This method starts room when there are at least 2 people connected
         [HttpPut("{id}/StartRoom")]
         public async Task<IActionResult> StartRoom(string id)
         {
@@ -85,7 +85,8 @@ namespace APIef.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        
+        //This method is called when the room is completed and returns list of movies that are common to all movie lists
         [HttpGet("{id}/MovieList")]
         public async Task<IActionResult> GetMovieList(string id)
         {
@@ -150,6 +151,23 @@ namespace APIef.Controllers
             }
         }
 
+        [HttpPost("{id}/RemoveUserFromRoom")]
+        public async Task<IActionResult> RemoveUserFromRoom(string id)
+        {
+            try
+            {
+                Room room = await _roomService.GetRoomAsync(id);
+                room.UsersInRoom--;
+                _roomService.UpdateRoom(room);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //This method adds movie list to room and if all users have added their movie list, it sets the room to completed
         [HttpPost("{id}/movieLists")]
         public async Task<IActionResult> AddMovieListToRoom(string id, [FromBody] List<Movie> movies) //add movie list to room
         {
@@ -175,8 +193,9 @@ namespace APIef.Controllers
             }
         }
 
+        //check if picking phase is completed
         [HttpGet("{id}/isCompleted")]
-        public async Task<JsonResult> IsCompleted(string id) //check if picking phase is completed
+        public async Task<JsonResult> IsCompleted(string id) 
         {
             Room room = await _roomService.GetRoomAsync(id);
             if (room.IsCompleted)
