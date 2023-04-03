@@ -15,7 +15,6 @@ namespace APIef.Models
         public string? VoteAvredge { get; set; }
         public string? VoteCount { get; set; }
         public string? Popularity { get; set; }
-        public string? Runtime { get; set; }
-        public int Likes { get; set; }
+        public int Likes { get; set; } = 0;
     }
 }
