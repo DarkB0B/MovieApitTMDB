@@ -31,6 +31,7 @@ namespace APIef.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -107,7 +108,9 @@ namespace APIef.Migrations
                 name: "Movies",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    dbId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TmdbId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Overview = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PosterPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -117,14 +120,13 @@ namespace APIef.Migrations
                     VoteAvredge = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VoteCount = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Popularity = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Runtime = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Likes = table.Column<int>(type: "int", nullable: false),
                     MovieCollectionId = table.Column<int>(type: "int", nullable: true),
                     MovieListId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Movies", x => x.Id);
+                    table.PrimaryKey("PK_Movies", x => x.dbId);
                     table.ForeignKey(
                         name: "FK_Movies_MovieCollections_MovieCollectionId",
                         column: x => x.MovieCollectionId,

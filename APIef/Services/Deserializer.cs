@@ -18,9 +18,9 @@ namespace APIef.Services
                     BackdropPath = item.backdrop_path,
                     OriginalTitle = item.original_title,
                     VoteAvredge = item.vote_average,
-                    Runtime = item.runtime,
+                    VoteCount = item.vote_count,
                     Popularity = item.popularity,
-                    Id = item.id
+                    TmdbId = item.id
                 });
             }
             return movies;

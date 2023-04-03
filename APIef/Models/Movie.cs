@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Policy;
 
 namespace APIef.Models
 {
     public class Movie
     {
         [Key]
-        public string Id { get; set; }
+        public int dbId { get; set; } = 0;
+        public string TmdbId { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }
         public string? PosterPath { get; set; }

@@ -67,12 +67,14 @@ namespace APIef.Controllers
         {
             int genre = 14;
             List<Movie> movies = new List<Movie>();
+            movies = await externalApiService.GetMoviesPerGenre(genre, 1);
+            
 
-            movies = await externalApiService.GetMoviesPerGenre(genre);
 
             MovieCollection movieCollection = new MovieCollection();
             movieCollection.Movies = movies;
             movieCollection.Title = "Action";
+            movieCollection.Description = "Action movies";
             movieCollection.Id = 0;
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
 

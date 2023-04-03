@@ -40,14 +40,17 @@ namespace APIef.Services
                 return genres;
             }
         }
-        public async Task<List<Movie>> GetMoviesPerGenre(int genreId)
+        public async Task<List<Movie>> GetMoviesPerGenre(int genreId, int? page)
         {
-            int page = 1;
+            if (page == null)
+            {
+                page = 1;
+            }
             var client = new HttpClient();
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&page={page}&sort_by=vote_average.desc"),
+                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&page={page}&sort_by=popularity.desc&vote_average.gte=7.5"),
             };
 
             using (var response = await client.SendAsync(request))

@@ -38,7 +38,7 @@ namespace APIef.Controllers
             foreach (int genreId in genreList)
             {
                 // Get 12 movies for the current genre
-                List<Movie> moviesForGenre = await externalApiService.GetMoviesPerGenre(genreId);
+                List<Movie> moviesForGenre = await externalApiService.GetMoviesPerGenre(genreId, 1);
 
                 // Add up to `moviesPerGenre` movies from the current genre to the result list
                 int moviesAdded = 0;
@@ -84,7 +84,7 @@ namespace APIef.Controllers
 
             List<Movie> movies = new List<Movie>();
            
-                movies = await externalApiService.GetMoviesPerGenre(genre);
+                movies = await externalApiService.GetMoviesPerGenre(genre, 1);
          
             //randomly choose some movies from movies list                 
             return new JsonResult(movies);

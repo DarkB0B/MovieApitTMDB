@@ -6,8 +6,8 @@ namespace APIef.Models
     {
         [Key]
         public string Id { get; set; }
-        public int UsersInRoom { get ; set; }
-        public bool IsStarted { get; set; } = false; 
+        public int UsersInRoom { get; set; }
+        public bool IsStarted { get; set; } = false;
         public List<MovieList> MovieLists { get; set; } = new List<MovieList>();
         public bool IsCompleted { get; set; } = false;
     }

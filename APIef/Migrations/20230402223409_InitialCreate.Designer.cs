@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIef.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230330101621_InitialCreate")]
+    [Migration("20230402223409_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,8 +47,11 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.Movie", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("dbId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("dbId"));
 
                     b.Property<string>("BackdropPath")
                         .HasColumnType("nvarchar(max)");
@@ -78,10 +81,11 @@ namespace APIef.Migrations
                     b.Property<string>("ReleaseDate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Runtime")
+                    b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("TmdbId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -91,7 +95,7 @@ namespace APIef.Migrations
                     b.Property<string>("VoteCount")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("dbId");
 
                     b.HasIndex("MovieCollectionId");
 
@@ -107,6 +111,10 @@ namespace APIef.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImagePath")
                         .IsRequired()

@@ -9,6 +9,7 @@ namespace APIef.Models
         [Key]
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string ImagePath { get; set; } = string.Empty;
         public List<Movie> Movies { get; set; }
         //int popularity?
