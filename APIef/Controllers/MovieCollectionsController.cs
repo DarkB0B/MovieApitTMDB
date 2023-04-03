@@ -46,13 +46,14 @@ namespace APIef.Controllers
             try
             {
                 List<MovieCollection> movieCollections = await Task.FromResult(_movieCollectionsService.GetMovieCollections());
-
+                Console.WriteLine("sent some data");
                 return Ok(movieCollections);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+
         }
         // POST api/movie-collections
         [HttpPost]
@@ -79,6 +80,18 @@ namespace APIef.Controllers
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
 
             return new JsonResult(movieCollection);
+        }
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] MovieCollection movieCollection)
+        {
+            await _movieCollectionsService.UpdateMovieCollectionAsync(movieCollection);
+            return Ok();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _movieCollectionsService.DeleteMovieCollectionAsync(id);
+            return Ok();
         }
     }
 }
