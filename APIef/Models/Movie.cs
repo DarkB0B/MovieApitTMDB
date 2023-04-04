@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Policy;
+using System.Text.Json.Serialization;
 
 namespace APIef.Models
 {
     public class Movie
     {
         [Key]
-        public int dbId { get; set; } = 0;
-        public string TmdbId { get; set; }
+        public string Id { get; set; }
         public string Title { get; set; }
         public string Overview { get; set; }
         public string? PosterPath { get; set; }
@@ -17,6 +17,10 @@ namespace APIef.Models
         public string? VoteAvredge { get; set; }
         public string? VoteCount { get; set; }
         public string? Popularity { get; set; }
-        public int Likes { get; set; } = 0;
+
+        [JsonIgnore]
+        public ICollection<MovieCollection> MovieCollections { get; set; }
+        [JsonIgnore]
+        public ICollection<MovieList> MovieLists { get;}
     }
 }

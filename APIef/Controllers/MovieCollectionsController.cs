@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using APIef.Models;
 using APIef.Services;
 using APIef.Interface;
+using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace APIef.Controllers
 {
@@ -12,10 +16,12 @@ namespace APIef.Controllers
     public class MovieCollectionsController : ControllerBase
     {
         private readonly IMovieCollections _movieCollectionsService;
+        private readonly DataContext _context;
         readonly ExternalApiService externalApiService = new ExternalApiService();
-        public MovieCollectionsController(IMovieCollections movieCollectionsService)
+        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context)
         {
             _movieCollectionsService = movieCollectionsService;
+            _context = context;
         }
 
         // GET api/movie-collections/{id}
@@ -24,12 +30,13 @@ namespace APIef.Controllers
         {
             try
             {
-                MovieCollection movieCollection = await Task.FromResult(_movieCollectionsService.GetMovieCollection(id));
+                MovieCollection movieCollection = await _movieCollectionsService.GetMovieCollectionAsync(id);
 
                 if (movieCollection == null)
                 {
                     return NotFound();
                 }
+               
 
                 return Ok(movieCollection);
             }
@@ -45,7 +52,7 @@ namespace APIef.Controllers
         {
             try
             {
-                List<MovieCollection> movieCollections = await Task.FromResult(_movieCollectionsService.GetMovieCollections());
+                List<MovieCollection> movieCollections = await _movieCollectionsService.GetMovieCollectionsAsync();
                 Console.WriteLine("sent some data");
                 return Ok(movieCollections);
             }
@@ -66,18 +73,19 @@ namespace APIef.Controllers
         [Route("CreateMovieCollecitionAndSaveInDb")]
         public async Task<JsonResult> Get()
         {
-            int genre = 14;
+            int genre = 10751;
             List<Movie> movies = new List<Movie>();
-            movies = await externalApiService.GetMoviesPerGenre(genre, 1);
-            
-
-
+            // movies = await externalApiService.GetMoviesPerGenre(genre, 1);
+            Movie? turo = _context.Movies.Find("673");
+            movies.Add(turo);
             MovieCollection movieCollection = new MovieCollection();
             movieCollection.Movies = movies;
             movieCollection.Title = "Action";
             movieCollection.Description = "Action movies";
             movieCollection.Id = 0;
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
+            
+
 
             return new JsonResult(movieCollection);
         }

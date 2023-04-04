@@ -133,7 +133,7 @@ namespace APIef.Controllers
             };
             try
             {
-                while(_roomService.RoomExists(room.Id) == true)
+                while(await _roomService.RoomExistsAsync(room.Id) == true)
                 {
                     room.Id = CodeGenerator.RandomString(5);
                 }
@@ -155,7 +155,7 @@ namespace APIef.Controllers
             {
                 Room room = await _roomService.GetRoomAsync(id);
                 room.UsersInRoom++;
-                 _roomService.UpdateRoom(room);
+                 await _roomService.UpdateRoomAsync(room);
                 return Ok();
             }
             catch (Exception ex)
@@ -171,7 +171,7 @@ namespace APIef.Controllers
             {
                 Room room = await _roomService.GetRoomAsync(id);
                 room.UsersInRoom--;
-                _roomService.UpdateRoom(room);
+                await _roomService.UpdateRoomAsync(room);
                 return Ok();
             }
             catch (Exception ex)

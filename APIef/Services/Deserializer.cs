@@ -20,7 +20,7 @@ namespace APIef.Services
                     VoteAvredge = item.vote_average,
                     VoteCount = item.vote_count,
                     Popularity = item.popularity,
-                    TmdbId = item.id
+                    Id = item.id
                 });
             }
             return movies;

@@ -15,5 +15,18 @@ namespace APIef.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<MovieList> MovieLists { get; set; }
 
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MovieCollection>()
+                .HasMany(x => x.Movies)
+                .WithMany(y => y.MovieCollections)
+                .UsingEntity(z => z.ToTable("MovieCollectionMovies"));
+
+            modelBuilder.Entity<MovieList>()
+                .HasMany(x => x.Movies)
+                .WithMany(y => y.MovieLists)
+                .UsingEntity(z => z.ToTable("MovieMovieLists"));
+        }
     }
 }
