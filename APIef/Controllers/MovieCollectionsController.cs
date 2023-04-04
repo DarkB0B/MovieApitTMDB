@@ -73,17 +73,16 @@ namespace APIef.Controllers
         [Route("CreateMovieCollecitionAndSaveInDb")]
         public async Task<JsonResult> Get()
         {
-            int genre = 10751;
+            int genre = 18;
             List<Movie> movies = new List<Movie>();
-            // movies = await externalApiService.GetMoviesPerGenre(genre, 1);
-            Movie? turo = _context.Movies.Find("673");
-            movies.Add(turo);
+             movies = await externalApiService.GetMoviesPerGenre(genre, 1);          
             MovieCollection movieCollection = new MovieCollection();
             movieCollection.Movies = movies;
             movieCollection.Title = "Action";
             movieCollection.Description = "Action movies";
             movieCollection.Id = 0;
-            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
+            MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
+            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
             
 
 

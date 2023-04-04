@@ -100,6 +100,31 @@ namespace APIef.Services
                 throw;
             }
         }
+        public MovieCollection AddMovieListToCollection(MovieCollection movieCollection, List<Movie> movies)
+        {
+            try
+            {
+                List<Movie> res = new List<Movie>();
+                movies.ForEach(movie =>
+                {
+                    Movie? moviee =  _context.Movies.Find(movie.Id);
+                    if (moviee == null)
+                    {
+                        res.Add(movie);
+                    }
+                    else if (moviee != null)
+                    {
+                        res.Add(moviee);
+                    }
+                    movieCollection.Movies = res;                
+                });
+                return movieCollection;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
 
     }
