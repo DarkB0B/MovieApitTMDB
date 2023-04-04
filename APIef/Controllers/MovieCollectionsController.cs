@@ -71,9 +71,9 @@ namespace APIef.Controllers
         }
         [HttpGet]
         [Route("CreateMovieCollecitionAndSaveInDb")]
-        public async Task<JsonResult> Get()
+        public async Task<JsonResult> GetSave(int genre)
         {
-            int genre = 18;
+             
             List<Movie> movies = new List<Movie>();
              movies = await externalApiService.GetMoviesPerGenre(genre, 1);          
             MovieCollection movieCollection = new MovieCollection();
