@@ -134,5 +134,19 @@ namespace APIef.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
             }
         }
+        [HttpPost]
+        [Route("admin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] UserCredentials userCredentials)
+        {
+            try
+            {
+                await _userService.AddUserAsync(new User { UserName = userCredentials.UserName, Password = userCredentials.Password, Role = new Role { RoleId = 3, Name = "Admin" } }) ;
+                return CreatedAtAction(nameof(GetUser), new { userName = userCredentials.UserName }, userCredentials);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
+            }
+        }
     }
 }

@@ -28,5 +28,6 @@ namespace APIef.Data
                 .WithMany(y => y.MovieLists)
                 .UsingEntity(z => z.ToTable("MovieMovieLists"));
         }
+
     }
 }

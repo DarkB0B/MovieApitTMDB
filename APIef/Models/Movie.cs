@@ -19,8 +19,8 @@ namespace APIef.Models
         public string? Popularity { get; set; }
 
         [JsonIgnore]
-        public ICollection<MovieCollection> MovieCollections { get; set; }
+        public ICollection<MovieCollection> MovieCollections { get; set; } = new List<MovieCollection>();
         [JsonIgnore]
-        public ICollection<MovieList> MovieLists { get;}
+        public ICollection<MovieList> MovieLists { get; } = new List<MovieList>();
     }
 }

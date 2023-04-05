@@ -84,6 +84,26 @@ namespace APIef.Services
                 Console.WriteLine(e.Message);
             }
         }
+        public async Task AddListToRoomAsync(string roomId, MovieList movieList)
+        {
+            try
+            {
+                Room? room = await _context.Rooms.FindAsync(roomId);
+                if (room != null)
+                {
+                    room.MovieLists.Add(movieList);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(room));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }   
 
     }
 }

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using APIef.Data;
+using APIef.Interface;
 
 namespace APIef.Controllers
 {
@@ -19,11 +20,11 @@ namespace APIef.Controllers
 
 
         readonly ExternalApiService externalApiService = new ExternalApiService();
- 
+        private readonly IMovies _movieService;
 
-        public MoviesController()
+        public MoviesController(IMovies movieService)
         {
-            
+            _movieService = movieService;
         }
 
 
@@ -87,6 +88,14 @@ namespace APIef.Controllers
                 movies = await externalApiService.GetMoviesPerGenre(genre, 1);
          
             //randomly choose some movies from movies list                 
+            return new JsonResult(movies);
+        }
+        [HttpGet]
+        [Route("GetMoviesFromDb")]
+        public async Task<JsonResult> GetMoviesFromDb()
+        {
+            List<Movie> movies = new List<Movie>();
+            movies = await _movieService.GetMoviesAsync();
             return new JsonResult(movies);
         }
 

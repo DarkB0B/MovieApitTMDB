@@ -66,10 +66,7 @@ namespace APIef.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<String> movieIds, string title, string description)
         {
-            
-
             List<Movie> movies = await externalApiService.GetMoviesById(movieIds);
-
             MovieCollection movieCollection = new MovieCollection();
             movieCollection.Title = title;
             movieCollection.Description = description;
@@ -79,23 +76,22 @@ namespace APIef.Controllers
             
             return Ok();
         }
-        [HttpGet]
-        [Route("CreateMovieCollecitionAndSaveInDb")]
-        public async Task<JsonResult> GetSave(int genre, string title, string description)
-        {           
-            List<Movie> movies = new List<Movie>();
-             movies = await externalApiService.GetMoviesPerGenre(genre, 1);          
-            MovieCollection movieCollection = new MovieCollection();
-            movieCollection.Title = title;
-            movieCollection.Description = description;
+        [HttpPost]
+        [Route("SaveCollectionInDb")]
+        public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
+        {
             movieCollection.Id = 0;
+            List<Movie> movies = new List<Movie>();
+            foreach (Movie movie in movieCollection.Movies) { movies.Add(movie); };
+
+
             MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
-            
 
-
-            return new JsonResult(movieCollection);
+            return Ok();
         }
+
+       
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] MovieCollection movieCollection)
         {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using APIef.Data;
 using APIef.Interface;
 using APIef.Services;
-using APIef.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +35,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 );
 builder.Services.AddTransient<IUsers, UserService>();
 builder.Services.AddTransient<IRooms, RoomService>();
+builder.Services.AddTransient<IMovies, MoviesService>();
 builder.Services.AddTransient<IMovieCollections, MovieCollectionsService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

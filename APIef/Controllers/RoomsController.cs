@@ -14,10 +14,11 @@ namespace APIef.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IRooms _roomService;
-
-        public RoomsController(IRooms roomService)
+        private readonly DataContext _context;
+        public RoomsController(IRooms roomService, DataContext context)
         {
             _roomService = roomService;
+            _context = context;
         }
 
         [HttpGet("{id}")]
@@ -187,9 +188,11 @@ namespace APIef.Controllers
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
-                if (room.IsStarted && !room.IsCompleted)
+                _context.MovieLists.Add(new MovieList { Id = 0, Movies = movies });
+                _context
+                if (room.IsStarted && !room.IsCompleted) 
                 {
-                    room.MovieLists.Add(new MovieList { Id = room.MovieLists.Count + 1, Movies = movies });
+                    await _roomService.AddListToRoomAsync(id ,);
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {
                         room.IsCompleted = true;
