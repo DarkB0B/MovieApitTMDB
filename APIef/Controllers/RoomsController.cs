@@ -188,8 +188,8 @@ namespace APIef.Controllers
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
-                _context.MovieLists.Add(new MovieList { Id = 0, Movies = movies });
-                _context
+                _context.MovieLists.Add(new MovieList { Movies = movies });
+                
                 if (room.IsStarted && !room.IsCompleted) 
                 {
                     await _roomService.AddListToRoomAsync(id ,);
