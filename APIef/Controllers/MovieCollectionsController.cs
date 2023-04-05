@@ -64,22 +64,29 @@ namespace APIef.Controllers
         }
         // POST api/movie-collections
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
+        public async Task<IActionResult> Post([FromBody] List<String> movieIds, string title, string description)
         {
-            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection);
+            List<Movie> movies = await externalApiService.GetMoviesById(movieIds);
+
+
+            MovieCollection movieCollection = new MovieCollection();
+            movieCollection.Title = "Action";
+            movieCollection.Description = "Action movies";
+            movieCollection.Id = 0;
+            MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
+            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
+            
             return Ok();
         }
         [HttpGet]
         [Route("CreateMovieCollecitionAndSaveInDb")]
-        public async Task<JsonResult> GetSave(int genre)
-        {
-             
+        public async Task<JsonResult> GetSave(int genre, string title, string description)
+        {           
             List<Movie> movies = new List<Movie>();
              movies = await externalApiService.GetMoviesPerGenre(genre, 1);          
             MovieCollection movieCollection = new MovieCollection();
-            movieCollection.Movies = movies;
-            movieCollection.Title = "Action";
-            movieCollection.Description = "Action movies";
+            movieCollection.Title = title;
+            movieCollection.Description = description;
             movieCollection.Id = 0;
             MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);

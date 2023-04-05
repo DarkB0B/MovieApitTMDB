@@ -25,6 +25,23 @@ namespace APIef.Services
             }
             return movies;
         }   
+        public Movie DeserializeMovie(dynamic result)
+        {
+            Movie x = new Movie
+            {
+                Title = result.title,
+                Overview = result.overview,
+                PosterPath = result.poster_path,
+                ReleaseDate = result.release_date,
+                BackdropPath = result.backdrop_path,
+                OriginalTitle = result.original_title,
+                VoteAvredge = result.vote_average,
+                VoteCount = result.vote_count,
+                Popularity = result.popularity,
+                Id = result.id
+            };
+            return x;
+        }
            
     }
 }
