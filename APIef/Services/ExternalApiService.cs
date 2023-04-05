@@ -9,12 +9,9 @@ namespace APIef.Services
     public class ExternalApiService
     {
         private string apiKey = "2c3773c58b96fc195869c5f3162ff399";
-        private readonly DataContext _context;
+       
         Deserializer deserializer = new Deserializer();
-        public ExternalApiService(DataContext context)
-        {
-            _context = context;
-        }
+        
 
 
         public async Task<List<Genre>> GetGenres()
@@ -81,11 +78,7 @@ namespace APIef.Services
                 if (movieIds[i] == null)
                 {
                     continue;
-                }
-                Movie? moviedb = await _context.Movies.FindAsync(movieIds[i]);
-                if (moviedb == null)
-                {
-
+                }            
                     string id = movieIds[i];
                     var client = new HttpClient();
                     var request = new HttpRequestMessage
@@ -110,11 +103,8 @@ namespace APIef.Services
                         }
                     }
                 }
-                else
-                {
-                    movies.Add(moviedb);
-                }
-            }
+
+            
             return movies;
 
         }

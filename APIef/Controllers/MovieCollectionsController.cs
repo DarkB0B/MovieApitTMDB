@@ -66,12 +66,13 @@ namespace APIef.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<String> movieIds, string title, string description)
         {
+            
+
             List<Movie> movies = await externalApiService.GetMoviesById(movieIds);
 
-
             MovieCollection movieCollection = new MovieCollection();
-            movieCollection.Title = "Action";
-            movieCollection.Description = "Action movies";
+            movieCollection.Title = title;
+            movieCollection.Description = description;
             movieCollection.Id = 0;
             MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
