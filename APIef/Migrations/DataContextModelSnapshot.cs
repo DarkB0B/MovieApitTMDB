@@ -107,11 +107,8 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.MovieList", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RoomId")
                         .HasColumnType("nvarchar(450)");
@@ -198,8 +195,8 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("MovieMovieList", b =>
                 {
-                    b.Property<int>("MovieListsId")
-                        .HasColumnType("int");
+                    b.Property<string>("MovieListsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MoviesId")
                         .HasColumnType("nvarchar(450)");

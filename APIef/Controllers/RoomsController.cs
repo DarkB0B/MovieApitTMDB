@@ -15,8 +15,10 @@ namespace APIef.Controllers
     {
         private readonly IRooms _roomService;
         private readonly DataContext _context;
-        public RoomsController(IRooms roomService, DataContext context)
+        private readonly IMovies _movieService;
+        public RoomsController(IRooms roomService, DataContext context, IMovies movieService)
         {
+            _movieService = movieService;
             _roomService = roomService;
             _context = context;
         }
@@ -188,14 +190,31 @@ namespace APIef.Controllers
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
-                _context.MovieLists.Add(new MovieList { Movies = movies });
+                string listId = room.Id + room.MovieLists.Count.ToString();
+                List<Movie> movieList = new List<Movie>();
+                foreach (Movie movie in movies)
+                {
+                     Movie? x = await _movieService.GetMovieAsync(movie.Id);
+                    if(x == null)
+                    {
+                        movieList.Add(movie);
+                    }
+                    else if(x != null)
+                    {
+                        movieList.Add(x);
+                    }
+                }
+                MovieList list = new MovieList { Movies = movieList, Id = listId };
+                await _context.MovieLists.AddAsync(list);
+                await _context.SaveChangesAsync();
                 
                 if (room.IsStarted && !room.IsCompleted) 
                 {
-                    await _roomService.AddListToRoomAsync(id ,);
+                    await _roomService.AddListToRoomAsync(id , list);
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {
                         room.IsCompleted = true;
+                        await _roomService.UpdateRoomAsync(room);
                         return Ok("Picking Phase Completed");
                     }
                     await _roomService.UpdateRoomAsync(room);
@@ -219,6 +238,12 @@ namespace APIef.Controllers
                 return new JsonResult("true");
             }
             return new JsonResult("false");
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRoom(string id)
+        {
+            await _roomService.DeleteRoomAsync(id);
+            return Ok();
         }
     }
 }

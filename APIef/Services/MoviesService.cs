@@ -22,15 +22,12 @@ namespace APIef.Services
             
         }
 
-        public async Task<Movie> GetMovieAsync(int movieId)
+        public async Task<Movie> GetMovieAsync(string movieId)
         {
             try
             {
                 Movie? movie = await _context.Movies.FindAsync(movieId);
-                if (movie == null)
-                {
-                    throw new ArgumentNullException();
-                }     
+   
                 return movie;
             }
             catch (Exception ex) { throw new Exception(ex.ToString()); }
@@ -46,7 +43,7 @@ namespace APIef.Services
             catch (Exception ex) { throw new Exception(ex.ToString()); }
         }
 
-        public async Task<bool> MovieExistsAsync(int movieId)
+        public async Task<bool> MovieExistsAsync(string movieId)
         {
             try
             {

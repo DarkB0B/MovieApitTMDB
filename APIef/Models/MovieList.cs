@@ -5,7 +5,7 @@ namespace APIef.Models
     public class MovieList
     {
         [Key]
-        public int Id { get; set; } = 0;
+        public string Id { get; set; } 
         public ICollection<Movie> Movies { get; set; } = new List<Movie>();
     }
 }

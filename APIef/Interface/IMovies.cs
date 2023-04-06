@@ -5,8 +5,8 @@ namespace APIef.Interface
     public interface IMovies
     {
         Task AddMovieAsync(Movie movie);
-        Task<Movie> GetMovieAsync(int movieId);
-        Task<bool> MovieExistsAsync(int movieId);
+        Task<Movie> GetMovieAsync(string movieId);
+        Task<bool> MovieExistsAsync(string movieId);
         Task<List<Movie>> GetMoviesAsync();
     }
 }

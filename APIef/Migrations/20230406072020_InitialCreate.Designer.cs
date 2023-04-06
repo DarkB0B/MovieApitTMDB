@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIef.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230404203545_InitialCreate")]
+    [Migration("20230406072020_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -110,11 +110,8 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("APIef.Models.MovieList", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RoomId")
                         .HasColumnType("nvarchar(450)");
@@ -201,8 +198,8 @@ namespace APIef.Migrations
 
             modelBuilder.Entity("MovieMovieList", b =>
                 {
-                    b.Property<int>("MovieListsId")
-                        .HasColumnType("int");
+                    b.Property<string>("MovieListsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MoviesId")
                         .HasColumnType("nvarchar(450)");
