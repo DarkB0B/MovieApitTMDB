@@ -242,6 +242,12 @@ namespace APIef.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteRoom(string id)
         {
+            Room room = await _roomService.GetRoomAsync(id);
+            foreach(MovieList list in room.MovieLists)
+            {
+                _context.MovieLists.Remove(list);
+            }
+            _context.SaveChanges();
             await _roomService.DeleteRoomAsync(id);
             return Ok();
         }
