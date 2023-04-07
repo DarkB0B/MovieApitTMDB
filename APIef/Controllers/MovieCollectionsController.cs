@@ -77,6 +77,21 @@ namespace APIef.Controllers
             return Ok();
         }
         [HttpPost]
+        [Route("SaveCollectionInDbFromWeb")]
+        public async Task<IActionResult> Postsave(int id)
+        {
+            MovieCollection movieCollection = new MovieCollection();
+            List<Movie> movies = await externalApiService.GetMoviesPerGenre(id,1);
+            movieCollection.Id = 0;
+            movieCollection.Title = "test";
+            movieCollection.Description = "test";
+            MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
+            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
+
+            return Ok();
+        }
+
+        [HttpPost]
         [Route("SaveCollectionInDb")]
         public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
         {
