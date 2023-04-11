@@ -31,7 +31,7 @@ namespace APIef.Controllers
             return Ok(_dbContext.Roles);
         }
         [HttpPost]
-        [Route("SaveRolesToDb")]
+        [Route("test/SaveRolesToDb")]
         public IActionResult SaveRoles()
         {
             List<Role> roles = new List<Role>();

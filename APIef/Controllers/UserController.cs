@@ -113,7 +113,7 @@ namespace APIef.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
             }
         }
-        [HttpPut("{userName}/password")]
+        [HttpPatch("{userName}")]
         public async Task<IActionResult> ChangePassword(string userName, [FromBody] ChangePassword changePassword)
         {
             try
@@ -135,7 +135,7 @@ namespace APIef.Controllers
             }
         }
         [HttpPost]
-        [Route("admin")]
+        [Route("test/admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] UserCredentials userCredentials)
         {
             try

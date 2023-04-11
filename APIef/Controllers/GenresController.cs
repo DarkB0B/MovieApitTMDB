@@ -25,28 +25,21 @@ namespace APIef.Controllers
         [HttpPost]
         public async Task<JsonResult> AddGenre([FromBody] Genre genre)
         {
-            _dbContext.Genres.Add(genre);
-            _dbContext.SaveChanges();
+            await _dbContext.Genres.AddAsync(genre);
+            await _dbContext.SaveChangesAsync();
             return new JsonResult(Ok());
-        }
-        [HttpGet]
-        [Route("GetAll")]
-        public async Task<JsonResult> GetAllGenres()
-        {
-            List<Genre> genres = await Task.FromResult(_dbContext.Genres.ToList());
-            return new JsonResult(genres);
-        }
+        } 
         [HttpPost]
-        [Route("SaveAll")]
+        [Route("test/SaveAll")]
         public async Task<JsonResult> SaveGenres()
         {
 
             List<Genre> genres = await externalApiService.GetGenres();
             foreach (var genre in genres)
             {
-                _dbContext.Genres.Add(genre);
+                await _dbContext.Genres.AddAsync(genre);
             }
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return new JsonResult(genres);
         }
 

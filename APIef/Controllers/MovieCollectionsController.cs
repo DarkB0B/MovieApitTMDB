@@ -77,7 +77,7 @@ namespace APIef.Controllers
             return Ok();
         }
         [HttpPost]
-        [Route("SaveCollectionInDbFromWeb")]
+        [Route("test/SaveCollectionInDbFromWeb")]
         public async Task<IActionResult> Postsave(int id)
         {
             MovieCollection movieCollection = new MovieCollection();
@@ -92,7 +92,7 @@ namespace APIef.Controllers
         }
 
         [HttpPost]
-        [Route("SaveCollectionInDb")]
+        [Route("test/SaveCollectionInDb")]
         public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
         {
             movieCollection.Id = 0;

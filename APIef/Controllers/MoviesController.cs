@@ -79,7 +79,7 @@ namespace APIef.Controllers
 
         }
         [HttpGet]
-        [Route("GetMoviePerGenreTest")]
+        [Route("test/GetMoviePerGenre")]
         public async Task<JsonResult> Get(int genre)
         {
 
@@ -91,7 +91,7 @@ namespace APIef.Controllers
             return new JsonResult(movies);
         }
         [HttpGet]
-        [Route("GetMoviesFromDb")]
+        [Route("test/GetMoviesFromDb")]
         public async Task<JsonResult> GetMoviesFromDb()
         {
             List<Movie> movies = new List<Movie>();
