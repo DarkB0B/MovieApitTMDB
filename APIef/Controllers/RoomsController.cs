@@ -191,8 +191,6 @@ namespace APIef.Controllers
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {
                         room.IsCompleted = true;
-                        
-
                         double threshold = room.MovieLists.Count * 0.7;
                         Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
 
@@ -220,7 +218,11 @@ namespace APIef.Controllers
                             }
                         }
                         MovieList finalList = new MovieList { Movies = commonMovies, Id = room.Id + "final"};
+                        await _context.MovieLists.AddAsync(finalList);
                         await _roomService.UpdateRoomAsync(room);
+                        await _context.SaveChangesAsync();
+                        await _roomService.AddListToRoomAsync(id, finalList);
+                        await _context.SaveChangesAsync();
                         return Ok("Picking Phase Completed");
                     }
 
