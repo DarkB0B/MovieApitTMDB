@@ -22,21 +22,41 @@ namespace APIef.Controllers
             _roomService = roomService;
             _context = context;
         }
-
+        //get room by id
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, string? option)
         {
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
-                return Ok(room);
+                if (option == null)
+                {             
+                    return Ok(room);
+                }
+                else if(option == "started")
+                {
+                    if (room.IsStarted)
+                    {
+                        return Ok(true);
+                    }
+                    return Ok(false);
+                }
+                else if(option == "completed")
+                {
+                    if (room.IsCompleted)
+                    {
+                        return Ok(true);
+                    }
+                    return Ok(false);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
+        //edit room
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(string id, Room room)
         {
@@ -55,20 +75,9 @@ namespace APIef.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpGet("{id}/IsStarted")]
-        public async Task<IActionResult> IsStarted(string id)
-        {
-            Room room = await _roomService.GetRoomAsync(id);
-            if (room.IsStarted)
-            {
-                return Ok(true);
-            }
-
-            return Ok(false);
-        }
+      
         //This method starts room when there are at least 2 people connected
-        [HttpPut("{id}/StartRoom")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> StartRoom(string id)
         {
             try
@@ -89,41 +98,8 @@ namespace APIef.Controllers
             }
         }
         
-        //This method is called when the room is completed and returns list of movies that are common to all movie lists
-        [HttpGet("{id}/MovieList")]
-        public async Task<IActionResult> GetMovieList(string id)
-        {
-            Room room = await _roomService.GetRoomAsync(id);
-            double threshold = room.MovieLists.Count * 0.7;
-            Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
-
-            foreach (MovieList movieList in room.MovieLists)
-            {
-                foreach (Movie obj in movieList.Movies)
-                {
-                    if (objCount.ContainsKey(obj))
-                    {
-                        objCount[obj]++;
-                    }
-                    else
-                    {
-                        objCount.Add(obj, 1);
-                    }
-                }
-            }
-
-            List<Movie> commonMovies = new List<Movie>();
-            foreach (KeyValuePair<Movie, int> entry in objCount)
-            {
-                if (entry.Value >= threshold)
-                {
-                    commonMovies.Add(entry.Key);
-                }
-            }
-
-            return Ok(commonMovies);
-        }
-
+        
+        //create new room
         [HttpPost]
         public async Task<IActionResult> Post()
         {
@@ -151,7 +127,7 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpPost("{id}/AddUserToRoom")]
+        [HttpPatch("{id}/AddUserToRoom")]
         public async Task<IActionResult> AddUserToRoom(string id)
         {
             try
@@ -167,7 +143,7 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpPost("{id}/RemoveUserFromRoom")]
+        [HttpPatch("{id}/RemoveUserFromRoom")]
         public async Task<IActionResult> RemoveUserFromRoom(string id)
         {
             try
@@ -183,7 +159,7 @@ namespace APIef.Controllers
             }
         }
 
-        //This method adds movie list to room and if all users have added their movie list, it sets the room to completed
+        //This method adds movie list to room and if all users have added their movie list, it sets the room to completed and generates final movie list
         [HttpPost("{id}/movieLists")]
         public async Task<IActionResult> AddMovieListToRoom(string id, [FromBody] List<Movie> movies) //add movie list to room
         {
@@ -211,15 +187,47 @@ namespace APIef.Controllers
                 if (room.IsStarted && !room.IsCompleted) 
                 {
                     await _roomService.AddListToRoomAsync(id , list);
+
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {
                         room.IsCompleted = true;
+                        
+
+                        double threshold = room.MovieLists.Count * 0.7;
+                        Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
+
+                        foreach (MovieList thislist in room.MovieLists)
+                        {
+                            foreach (Movie obj in thislist.Movies)
+                            {
+                                if (objCount.ContainsKey(obj))
+                                {
+                                    objCount[obj]++;
+                                }
+                                else
+                                {
+                                    objCount.Add(obj, 1);
+                                }
+                            }
+                        }
+
+                        List<Movie> commonMovies = new List<Movie>();
+                        foreach (KeyValuePair<Movie, int> entry in objCount)
+                        {
+                            if (entry.Value >= threshold)
+                            {
+                                commonMovies.Add(entry.Key);
+                            }
+                        }
+                        MovieList finalList = new MovieList { Movies = commonMovies, Id = room.Id + "final"};
                         await _roomService.UpdateRoomAsync(room);
                         return Ok("Picking Phase Completed");
                     }
+
                     await _roomService.UpdateRoomAsync(room);
                     return Ok("MovieList Updated");
                 }
+
                 return BadRequest();
             }
             catch (Exception ex)
@@ -227,18 +235,8 @@ namespace APIef.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        //check if picking phase is completed
-        [HttpGet("{id}/isCompleted")]
-        public async Task<JsonResult> IsCompleted(string id) 
-        {
-            Room room = await _roomService.GetRoomAsync(id);
-            if (room.IsCompleted)
-            {
-                return new JsonResult("true");
-            }
-            return new JsonResult("false");
-        }
+        
+        //delete room and asociated lists
         [HttpDelete]
         public async Task<IActionResult> DeleteRoom(string id)
         {
