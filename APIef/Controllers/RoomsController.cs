@@ -24,32 +24,13 @@ namespace APIef.Controllers
         }
         //get room by id
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id, string? option)
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
-                if (option == null)
-                {             
-                    return Ok(room);
-                }
-                else if(option == "started")
-                {
-                    if (room.IsStarted)
-                    {
-                        return Ok(true);
-                    }
-                    return Ok(false);
-                }
-                else if(option == "completed")
-                {
-                    if (room.IsCompleted)
-                    {
-                        return Ok(true);
-                    }
-                    return Ok(false);
-                }
-                return BadRequest();
+
+                return Ok(room);
             }
             catch (Exception ex)
             {
@@ -127,7 +108,7 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpPatch("{id}/User")]
+        [HttpPatch("{id}/users")]
         public async Task<IActionResult> AddUserToRoom(string id, string option)
         {
             try
@@ -157,7 +138,7 @@ namespace APIef.Controllers
        
 
         //This method adds movie list to room and if all users have added their movie list, it sets the room to completed and generates final movie list
-        [HttpPost("{id}/lists")]
+        [HttpPost("{id}/movielists")]
         public async Task<IActionResult> AddMovieListToRoom(string id, [FromBody] List<Movie> movies) //add movie list to room
         {  
             try
