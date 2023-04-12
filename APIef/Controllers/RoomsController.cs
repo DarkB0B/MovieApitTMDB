@@ -127,15 +127,26 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpPatch("{id}/AddUserToRoom")]
-        public async Task<IActionResult> AddUserToRoom(string id)
+        [HttpPatch("{id}/User")]
+        public async Task<IActionResult> AddUserToRoom(string id, string option)
         {
             try
             {
-                Room room = await _roomService.GetRoomAsync(id);
-                room.UsersInRoom++;
-                 await _roomService.UpdateRoomAsync(room);
-                return Ok();
+                if (option == "add")
+                {
+                    Room room = await _roomService.GetRoomAsync(id);
+                    room.UsersInRoom++;
+                    await _roomService.UpdateRoomAsync(room);
+                    return Ok();
+                }
+                else if (option == "remove")
+                {
+                    Room room = await _roomService.GetRoomAsync(id);
+                    room.UsersInRoom--;
+                    await _roomService.UpdateRoomAsync(room);
+                    return Ok();
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {
@@ -143,26 +154,12 @@ namespace APIef.Controllers
             }
         }
 
-        [HttpPatch("{id}/RemoveUserFromRoom")]
-        public async Task<IActionResult> RemoveUserFromRoom(string id)
-        {
-            try
-            {
-                Room room = await _roomService.GetRoomAsync(id);
-                room.UsersInRoom--;
-                await _roomService.UpdateRoomAsync(room);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+       
 
         //This method adds movie list to room and if all users have added their movie list, it sets the room to completed and generates final movie list
-        [HttpPost("{id}/movieLists")]
+        [HttpPost("{id}/lists")]
         public async Task<IActionResult> AddMovieListToRoom(string id, [FromBody] List<Movie> movies) //add movie list to room
-        {
+        {  
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
@@ -170,7 +167,7 @@ namespace APIef.Controllers
                 List<Movie> movieList = new List<Movie>();
                 foreach (Movie movie in movies)
                 {
-                     Movie? x = await _movieService.GetMovieAsync(movie.Id);
+                    Movie? x = await _movieService.GetMovieAsync(movie.Id);
                     if(x == null)
                     {
                         movieList.Add(movie);
@@ -191,33 +188,7 @@ namespace APIef.Controllers
                     if (room.MovieLists.Count == room.UsersInRoom)
                     {
                         room.IsCompleted = true;
-                        double threshold = room.MovieLists.Count * 0.7;
-                        Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
-
-                        foreach (MovieList thislist in room.MovieLists)
-                        {
-                            foreach (Movie obj in thislist.Movies)
-                            {
-                                if (objCount.ContainsKey(obj))
-                                {
-                                    objCount[obj]++;
-                                }
-                                else
-                                {
-                                    objCount.Add(obj, 1);
-                                }
-                            }
-                        }
-
-                        List<Movie> commonMovies = new List<Movie>();
-                        foreach (KeyValuePair<Movie, int> entry in objCount)
-                        {
-                            if (entry.Value >= threshold)
-                            {
-                                commonMovies.Add(entry.Key);
-                            }
-                        }
-                        MovieList finalList = new MovieList { Movies = commonMovies, Id = room.Id + "final"};
+                        MovieList finalList = _roomService.GetFinalList(room);
                         await _context.MovieLists.AddAsync(finalList);
                         await _roomService.UpdateRoomAsync(room);
                         await _context.SaveChangesAsync();
@@ -247,7 +218,7 @@ namespace APIef.Controllers
             {
                 _context.MovieLists.Remove(list);
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             await _roomService.DeleteRoomAsync(id);
             return Ok();
         }

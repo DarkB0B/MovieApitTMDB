@@ -103,7 +103,41 @@ namespace APIef.Services
             {
                 Console.WriteLine(e.Message);
             }
-        }   
+        }
+
+        public MovieList GetFinalList( Room room)
+        {
+            double threshold = room.MovieLists.Count * 0.7;
+
+            Dictionary<Movie, int> objCount = new Dictionary<Movie, int>();
+
+            foreach (MovieList thislist in room.MovieLists)
+            {
+                foreach (Movie obj in thislist.Movies)
+                {
+                    if (objCount.ContainsKey(obj))
+                    {
+                        objCount[obj]++;
+                    }
+                    else
+                    {
+                        objCount.Add(obj, 1);
+                    }
+                }
+            }
+
+            List<Movie> commonMovies = new List<Movie>();
+            foreach (KeyValuePair<Movie, int> entry in objCount)
+            {
+                if (entry.Value >= threshold)
+                {
+                    commonMovies.Add(entry.Key);
+                }
+            }
+
+            MovieList finalList = new MovieList { Movies = commonMovies, Id = room.Id + "final" };
+            return finalList;
+        }
 
     }
 }
