@@ -6,6 +6,8 @@ using APIef.Models;
 using APIef.Services;
 using APIef.Data;
 using APIef.Interface;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace APIef.Controllers
 {
@@ -16,8 +18,11 @@ namespace APIef.Controllers
         private readonly IRooms _roomService;
         private readonly DataContext _context;
         private readonly IMovies _movieService;
-        public RoomsController(IRooms roomService, DataContext context, IMovies movieService)
+        private readonly IMovieCollections _movieCollectionsService;
+        readonly ExternalApiService externalApiService = new ExternalApiService();
+        public RoomsController(IRooms roomService, DataContext context, IMovies movieService, IMovieCollections movieCollectionsService)
         {
+            _movieCollectionsService = movieCollectionsService;
             _movieService = movieService;
             _roomService = roomService;
             _context = context;
@@ -79,12 +84,20 @@ namespace APIef.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
-        
+
+
         //create new room
         [HttpPost]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post(String option, List<int>? genreList, bool? movie, int? ammount, int? collectionId)
         {
+
+            int maxAmmount = 50;
+            int minAmmount = 10;
+            //filtering out invalid options
+            if (option == null || (option != "collection" && option != "discover"))
+            {
+                return BadRequest();
+            }
             Room room = new Room
             {
                 Id = CodeGenerator.RandomString(5),
@@ -100,7 +113,85 @@ namespace APIef.Controllers
                 }
              
                 await _roomService.AddRoomAsync(room);
-                return Ok(room);   
+                if(option == "collection") 
+                {
+                    if(collectionId == null)
+                    {
+                        return BadRequest();
+                    }
+
+                    MovieCollection? movieCollection = await _movieCollectionsService.GetMovieCollectionAsync((int)collectionId);
+
+                    if(movieCollection == null)
+                    {
+                        return BadRequest("Wrong CollectionId");
+                    }
+
+                    MovieList starter = new MovieList { Movies = movieCollection.Movies, Id = room.Id + "starter" };
+                    await _context.MovieLists.AddAsync(starter);
+                    await _context.SaveChangesAsync();
+                    await _roomService.AddListToRoomAsync(room.Id, starter);
+                    return Ok(room);
+                }
+                else if(option == "discover")
+                {
+                    if (movie == null || ammount == null || (ammount > maxAmmount && ammount < minAmmount) || genreList == null || genreList.Count > 3 || genreList.Count < 1)
+                    {
+                        return BadRequest("Missing required fields");
+                    }
+                    //TODO implement variety for TV Series and Movie
+                    List<Movie> result = new List<Movie>();
+
+                    int moviesPerGenre = (int)ammount / genreList.Count;
+
+                    foreach (int genreId in genreList)
+                    {
+                        // Get 12 movies for the current genre
+                        //TODO: make loop flow if there arent enough movies in one page from api
+                        List<Movie> moviesForGenre = await externalApiService.GetMoviesPerGenre(genreId, 1);
+
+                        // Add up to `moviesPerGenre` movies from the current genre to the result list
+                        int moviesAdded = 0;
+                        foreach (Movie thismovie in moviesForGenre)
+                        {
+
+                            result.Add(thismovie);
+                            moviesAdded++;
+
+                            if (moviesAdded >= moviesPerGenre)
+                            {
+                                break;
+                            }
+
+                        }
+
+                        // If we couldn't find enough movies for the current genre, add as many as we can
+                        while (moviesAdded < moviesPerGenre && moviesForGenre.Any())
+                        {
+                            Movie movieToAdd = moviesForGenre.First();
+                            moviesForGenre.RemoveAt(0);
+
+
+                            result.Add(movieToAdd);
+                            moviesAdded++;
+
+                        }
+
+                        // If we still don't have enough movies, break out of the loop
+                        if (result.Count >= ammount)
+                        {
+                            break;
+                        }
+                    }
+
+                    MovieList starter = new MovieList { Movies = result, Id = room.Id + "starter" };
+                    await _context.MovieLists.AddAsync(starter);
+                    await _context.SaveChangesAsync();
+                    await _roomService.AddListToRoomAsync(room.Id, starter);
+                    return Ok(room);
+                }
+
+                return BadRequest();
                 
             }
             catch (Exception ex)
