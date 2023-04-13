@@ -68,10 +68,11 @@ namespace APIef.Controllers
                 {
                     room.IsStarted = true;
                     await _roomService.UpdateRoomAsync(room);
+                    Console.WriteLine("Room Started");
                     return Ok(room);
                 }
-
-                return BadRequest("Not Enough People Joined The Room");
+                Console.WriteLine("Not Enough People Joined The Room");
+                return BadRequest ("Not Enough People Joined The Room");
             }
             catch (Exception ex)
             {
@@ -192,6 +193,7 @@ namespace APIef.Controllers
         
         //delete room and asociated lists
         [HttpDelete]
+        [Route("{id}")]
         public async Task<IActionResult> DeleteRoom(string id)
         {
             Room room = await _roomService.GetRoomAsync(id);
