@@ -4,19 +4,22 @@ namespace Socket
 {
     public class RoomHub : Hub
     {
-        public Task JoinRoom(string roomName)
+
+        public async Task JoinRoom(string roomName)
         {
-            return Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+            await Clients.Group(roomName).SendAsync("New user has joined the room");
         }
 
-        public Task LeaveRoom(string roomName)
+        public async Task LeaveRoom(string roomName)
         {
-            return Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
+            await Clients.Group(roomName).SendAsync("User left the room");
         }
 
-        public Task SendMessageToGroup(string roomName, string message)
+        public async Task SendMessageToGroup(string roomName, string message)
         {
-            return Clients.Group(roomName).SendAsync(message);
+            await Clients.Group(roomName).SendAsync(message);
         }
 
     }

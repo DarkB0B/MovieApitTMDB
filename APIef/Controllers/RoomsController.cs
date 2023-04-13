@@ -235,6 +235,7 @@ namespace APIef.Controllers
         {  
             try
             {
+                Console.WriteLine("Got the list");
                 Room room = await _roomService.GetRoomAsync(id);
                 string listId = room.Id + room.MovieLists.Count.ToString();
                 List<Movie> movieList = new List<Movie>();
