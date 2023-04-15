@@ -34,7 +34,7 @@ namespace APIef.Controllers
             try
             {
                 Room room = await _roomService.GetRoomAsync(id);
-
+                Console.WriteLine("Room Sent");
                 return Ok(room);
             }
             catch (Exception ex)
