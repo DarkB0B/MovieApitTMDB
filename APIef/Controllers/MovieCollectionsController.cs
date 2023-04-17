@@ -8,9 +8,12 @@ using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace APIef.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class MovieCollectionsController : ControllerBase
@@ -25,6 +28,7 @@ namespace APIef.Controllers
         }
 
         // GET api/movie-collections/{id}
+        [Authorize(Roles = "Regular")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -47,6 +51,7 @@ namespace APIef.Controllers
         }
 
         // GET api/movie-collections
+        [Authorize(Roles = "Regular")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -63,6 +68,7 @@ namespace APIef.Controllers
 
         }
         // POST api/movie-collections
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<String> movieIds, string title, string description)
         {
@@ -76,6 +82,7 @@ namespace APIef.Controllers
             
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("test/SaveCollectionInDbFromWeb")]
         public async Task<IActionResult> Postsave(int id)
@@ -90,7 +97,7 @@ namespace APIef.Controllers
 
             return Ok();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("test/SaveCollectionInDb")]
         public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
@@ -106,13 +113,14 @@ namespace APIef.Controllers
             return Ok();
         }
 
-       
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] MovieCollection movieCollection)
         {
             await _movieCollectionsService.UpdateMovieCollectionAsync(movieCollection);
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

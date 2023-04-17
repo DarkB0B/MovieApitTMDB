@@ -61,11 +61,11 @@ namespace APIef.Services
                     _context.Users.Remove(user);
                     _context.SaveChanges();
                 }
-                throw new ArgumentNullException();
+                
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                Console.WriteLine(ex);
             }
         }
 
@@ -199,7 +199,7 @@ namespace APIef.Services
                     _context.Users.Remove(user);
                     await _context.SaveChangesAsync();
                 }
-                throw new ArgumentNullException();
+                else { throw new ArgumentNullException(); }
             }
             catch
             {

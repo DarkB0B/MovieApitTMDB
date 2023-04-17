@@ -8,9 +8,12 @@ using APIef.Data;
 using APIef.Interface;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace APIef.Controllers
 {
+    [Authorize(Roles = "Regular")]
     [ApiController]
     [Route("api/[controller]")]
     public class RoomsController : ControllerBase
@@ -259,7 +262,7 @@ namespace APIef.Controllers
                 {
                     await _roomService.AddListToRoomAsync(id , list);
 
-                    if (room.MovieLists.Count == room.UsersInRoom)
+                    if (room.MovieLists.Count == room.UsersInRoom + 1)
                     {
                         room.IsCompleted = true;
                         MovieList finalList = _roomService.GetFinalList(room);

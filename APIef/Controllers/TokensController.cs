@@ -2,6 +2,7 @@
 using APIef.Interface;
 using APIef.Models;
 using APIef.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,6 +10,7 @@ using System.Security.Claims;
 
 namespace APIef.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class TokensController : ControllerBase
@@ -63,7 +65,7 @@ namespace APIef.Controllers
                 signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Ok(new { token = jwt });
+            return Ok(jwt);
         }
     }
 }

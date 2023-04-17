@@ -10,9 +10,12 @@ using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using APIef.Data;
 using APIef.Interface;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace APIef.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class MoviesController : ControllerBase
@@ -27,7 +30,7 @@ namespace APIef.Controllers
             _movieService = movieService;
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<JsonResult> Get([FromBody] List<int> genreList, int requestedCount)
         {
@@ -78,6 +81,8 @@ namespace APIef.Controllers
             return new JsonResult(result);
 
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("test/GetMoviePerGenre")]
         public async Task<JsonResult> Get(int genre)
@@ -90,6 +95,8 @@ namespace APIef.Controllers
             //randomly choose some movies from movies list                 
             return new JsonResult(movies);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("test/GetMoviesFromDb")]
         public async Task<JsonResult> GetMoviesFromDb()

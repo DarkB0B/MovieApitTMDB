@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APIef.Controllers
 {
+    [Authorize(Roles = "Regular")]
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly IUsers _userService;
+
 
         public UserController(IUsers userService)
         {
@@ -20,6 +22,7 @@ namespace APIef.Controllers
         }
 
         // GET api/users
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -57,13 +60,23 @@ namespace APIef.Controllers
         }
 
         // POST api/users
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserCredentials userCredentials)
         {
             try
             {
-                await _userService.AddUserAsync(new User { UserName = userCredentials.UserName, Password = userCredentials.Password });
-                return CreatedAtAction(nameof(GetUser), new { userName = userCredentials.UserName }, userCredentials);
+                
+                if (_userService.UserExists(userCredentials.UserName) == true)
+                {
+                    return BadRequest("User with this name already exists");
+                }
+                else
+                {
+                    await _userService.AddUserAsync(new User { UserName = userCredentials.UserName, Password = userCredentials.Password });
+                    return CreatedAtAction(nameof(GetUser), new { userName = userCredentials.UserName }, userCredentials);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -92,21 +105,17 @@ namespace APIef.Controllers
         }
 
         // DELETE api/users/{userName}
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{userName}")]
         public async Task<IActionResult> DeleteUser(string userName)
         {
             try
             {
-                var user = await _userService.GetUserAsync(userName);
-                if (user != null)
-                {
+                
                     await _userService.DeleteUserAsync(userName);
-                    return NoContent();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    return Ok();
+                
+                
             }
             catch (Exception ex)
             {
@@ -114,14 +123,14 @@ namespace APIef.Controllers
             }
         }
         [HttpPatch("{userName}")]
-        public async Task<IActionResult> ChangePassword(string userName, [FromBody] ChangePassword changePassword)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePassword)
         {
             try
             {
-                string res = await _userService.CheckCredentialsAsync(new UserCredentials { UserName = userName, Password = changePassword.OldPassword });
+                string res = await _userService.CheckCredentialsAsync(new UserCredentials { UserName = changePassword.UserName, Password = changePassword.OldPassword });
                 if (res == "OK")
                 {
-                    await _userService.ChangePasswordAsync(new UserCredentials { UserName = userName, Password = changePassword.NewPassword });
+                    await _userService.ChangePasswordAsync(new UserCredentials { UserName = changePassword.UserName, Password = changePassword.NewPassword });
                     return NoContent();
                 }
                 else
@@ -134,6 +143,7 @@ namespace APIef.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
             }
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("test/admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] UserCredentials userCredentials)

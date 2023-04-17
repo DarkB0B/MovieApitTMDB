@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APIef.Controllers
 {
-
+    
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -18,6 +18,7 @@ namespace APIef.Controllers
             _dbContext = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddRole([FromBody] string role)
         {
@@ -25,11 +26,26 @@ namespace APIef.Controllers
             _dbContext.SaveChanges();
             return Ok();
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetRoles()
         {
             return Ok(_dbContext.Roles);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteRole(int id)
+        {
+            var role = _dbContext.Roles.FirstOrDefault(r => r.RoleId == id);
+            _dbContext.Roles.Remove(role);
+            _dbContext.SaveChanges();
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("test/SaveRolesToDb")]
         public IActionResult SaveRoles()
