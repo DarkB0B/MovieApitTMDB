@@ -171,6 +171,25 @@ namespace APIef.Services
             }
         }
 
+        public async Task AddAdmin(User user)
+        {
+            try
+            {
+                Role? role = await _context.Roles.FindAsync(3);
+                if (role != null)
+                {
+                    user.Role = role;
+                }
+
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public async Task<User> GetUserAsync(string userName)
         {
             try

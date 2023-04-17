@@ -1,6 +1,7 @@
 using APIef.Data;
 using APIef.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -9,32 +10,54 @@ namespace APItest
     [TestClass]
     public class UnitTest1
     {
+        public String Token;
 
-        public string Token;
-
-        //-----------------Users--------------------------
         [TestMethod]
 
-        public async Task CheckIfUserGetterDosentReturnNull()
+        public async Task CreateUser()
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
-            var response = await httpClient.GetAsync("/api/Users");
+            var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword"};
+            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
+
+
+            var response = await httpClient.PostAsync("/api/Users", content);
+
             response.EnsureSuccessStatusCode();
-            Assert.IsNotNull(response.Content);
+
+
+        }
+        [TestMethod]
+        public async Task LoginWrongPass()
+        {
+            var webAppFactory = new WebApplicationFactory<Program>();
+            var httpClient = webAppFactory.CreateDefaultClient();
+
+            var userCredentials = new UserCredentials { UserName = "newuser", Password = "xxxx" };
+            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("/api/Users", content);
+
+            Assert.IsFalse(response.IsSuccessStatusCode);
         }
 
-        
-        [TestMethod]
 
-        public async Task CheckIfUserGetterGetsnewuser()
+        [TestMethod]
+        public async Task Login()
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
-            var response = await httpClient.GetAsync("/api/Users");
+
+            var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword" };
+            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("/api/Tokens", content);
+
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
-            Assert.IsNotNull(body.Contains("newuser"));
+            Assert.IsNotNull(body);
+            Token = body;
         }
 
         [TestMethod]
@@ -44,24 +67,22 @@ namespace APItest
 
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
-            var response = await httpClient.GetAsync("/api/Users");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            var userCredentials = new ChangePassword { UserName = "newuser", OldPassword = "oldpassword", NewPassword = "newPassword" };
+            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
+            
+            var response = await httpClient.PatchAsync($"/api/Users/{userCredentials.UserName}", content);
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(body.Contains("changedpass123"));
         }
-        [TestMethod]
-        public async Task Login()
-        {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            var userCredentials = new UserCredentials { UserName = "newuser", Password = "newpassword" };
-            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync("/api/Tokens", content);
-            response.EnsureSuccessStatusCode();
-            var body = await response.Content.ReadAsStringAsync();
-            Assert.IsNotNull(body);
-            Console.WriteLine(body);
-        }
+
+        
+
+
+
+
+
 
 
         //---------------Genres-------------------
@@ -71,6 +92,7 @@ namespace APItest
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
             var response = await httpClient.GetAsync("/api/Genres");
 
@@ -86,6 +108,7 @@ namespace APItest
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
             var response = await httpClient.GetAsync("/api/Genres");
 
@@ -102,6 +125,7 @@ namespace APItest
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
             var response = await httpClient.GetAsync("/api/Genres");
 
@@ -116,6 +140,7 @@ namespace APItest
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             var response = await httpClient.GetAsync("/api/Roles");
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
@@ -123,10 +148,37 @@ namespace APItest
         }
 
 
-        
+        //-----------------Users--------------------------
 
         
-        //------------------Delete-----------
+
+        [TestMethod]
+
+        public async Task CheckIfUserGetterDosentReturnNull()
+        {
+            var webAppFactory = new WebApplicationFactory<Program>();
+            var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            var response = await httpClient.GetAsync("/api/Users");
+            response.EnsureSuccessStatusCode();
+            Assert.IsNotNull(response.Content);
+        }
+
+       
+        [TestMethod]
+
+        public async Task CheckIfUserGetterGetsnewuser()
+        {
+            var webAppFactory = new WebApplicationFactory<Program>();
+            var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            var response = await httpClient.GetAsync("/api/Users");
+            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(body.Contains("newuser"));
+        }
+
+        
         
 
         [TestMethod]
@@ -134,6 +186,7 @@ namespace APItest
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
             var response = await httpClient.DeleteAsync("/api/Users/username");
 
@@ -145,6 +198,7 @@ namespace APItest
         {
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
             var response = await httpClient.DeleteAsync("/api/Users/newuser");
 
