@@ -1,6 +1,7 @@
 using APIef.Data;
 using APIef.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -10,7 +11,26 @@ namespace APItest
     [TestClass]
     public class UnitTest1
     {
-        public String Token;
+
+
+        public string Token;
+        public UnitTest1()
+        {
+            Token = GetToken().Result;
+        }
+        public async Task<string> GetToken()
+        {
+            var webAppFactory = new WebApplicationFactory<Program>();
+            var httpClient = webAppFactory.CreateDefaultClient();
+
+            var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword" };
+            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("/api/Tokens", content);
+            var body = await response.Content.ReadAsStringAsync();
+            return body;
+        }
+        
 
         [TestMethod]
 
@@ -58,7 +78,10 @@ namespace APItest
             var body = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(body);
             Token = body;
+
         }
+
+        
 
         [TestMethod]
 
@@ -67,6 +90,7 @@ namespace APItest
 
             var webAppFactory = new WebApplicationFactory<Program>();
             var httpClient = webAppFactory.CreateDefaultClient();
+            
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             var userCredentials = new ChangePassword { UserName = "newuser", OldPassword = "oldpassword", NewPassword = "newPassword" };
             var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
