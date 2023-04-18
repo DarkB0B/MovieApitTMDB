@@ -88,7 +88,7 @@ namespace APIef.Controllers
         public async Task<IActionResult> Postsave(int id)
         {
             MovieCollection movieCollection = new MovieCollection();
-            List<Movie> movies = await externalApiService.GetMoviesPerGenre(id,1);
+            List<Movie> movies = await externalApiService.GetMoviesPerGenre(id,1,true);
             movieCollection.Id = 0;
             movieCollection.Title = "test";
             movieCollection.Description = "test";

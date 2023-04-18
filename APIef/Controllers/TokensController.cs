@@ -65,7 +65,7 @@ namespace APIef.Controllers
                 signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Ok(jwt);
+            return Ok(new { token = jwt });
         }
     }
 }

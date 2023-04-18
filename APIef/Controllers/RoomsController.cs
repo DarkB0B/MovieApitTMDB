@@ -142,52 +142,64 @@ namespace APIef.Controllers
                     {
                         return BadRequest("Missing required fields");
                     }
-                    //TODO implement variety for TV Series and Movie
+                    
                     List<Movie> result = new List<Movie>();
 
                     int moviesPerGenre = (int)ammount / genreList.Count;
 
+                    
+
+                    Random rnd = new Random();
                     foreach (int genreId in genreList)
                     {
-                        // Get 12 movies for the current genre
-                        //TODO: make loop flow if there arent enough movies in one page from api
-                        List<Movie> moviesForGenre = await externalApiService.GetMoviesPerGenre(genreId, 1);
-
-                        // Add up to `moviesPerGenre` movies from the current genre to the result list
                         int moviesAdded = 0;
-                        foreach (Movie thismovie in moviesForGenre)
+                        int page = 1;
+                        while (true)
                         {
+                            Console.WriteLine("Page: " + page + " Genre Id: " + genreId);
+                            //TODO: make loop flow if there arent enough movies in one page from api
+                            List<Movie> moviesForGenre = await externalApiService.GetMoviesPerGenre(genreId, page, movie);
+                            for (int i = 0; i < 5; i++)
+                            {
+                                int index = rnd.Next(0, moviesForGenre.Count);
+                                moviesForGenre.RemoveRange(index, 1);
+                            }
+                            // Add up to `moviesPerGenre` movies from the current genre to the result list
+                            
+                            foreach (Movie thismovie in moviesForGenre)
+                            {
 
-                            result.Add(thismovie);
-                            moviesAdded++;
+                                if (result.Find(x => x.Id == thismovie.Id) == null)
+                                {
+                                    result.Add(thismovie);
+                                    moviesAdded++;
+                                }
 
-                            if (moviesAdded >= moviesPerGenre)
+                                if (moviesAdded >= moviesPerGenre)
+                                {
+                                    break;
+                                }
+
+                            }
+
+                            // If we still don't have enough movies, page ++
+                            if (moviesAdded <= moviesPerGenre)
+                            {
+                                page++;
+                            }
+                            else
                             {
                                 break;
                             }
-
-                        }
-
-                        // If we couldn't find enough movies for the current genre, add as many as we can
-                        while (moviesAdded < moviesPerGenre && moviesForGenre.Any())
-                        {
-                            Movie movieToAdd = moviesForGenre.First();
-                            moviesForGenre.RemoveAt(0);
-
-
-                            result.Add(movieToAdd);
-                            moviesAdded++;
-
-                        }
-
-                        // If we still don't have enough movies, break out of the loop
-                        if (result.Count >= ammount)
-                        {
-                            break;
                         }
                     }
-
-                    MovieList starter = new MovieList { Movies = result, Id = room.Id + "starter" };
+                    
+                    List<Movie> res = _roomService.ValidateMovies(result);
+                    foreach(Movie x in res)
+                    {
+                        Console.WriteLine(x.Id);
+                    }
+                    MovieList starter = new MovieList { Movies = res, Id = room.Id + "starter" };
                     await _context.MovieLists.AddAsync(starter);
                     await _context.SaveChangesAsync();
                     await _roomService.AddListToRoomAsync(room.Id, starter);
