@@ -13,7 +13,7 @@ namespace APIef.Controllers
     [ApiController]
     public class GenresController : ControllerBase
     {
-        readonly ExternalApiService externalApiService = new ExternalApiService();
+     
         private readonly DataContext _dbContext;
         public GenresController(DataContext context)
         {

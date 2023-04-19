@@ -45,24 +45,6 @@ namespace APIef.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [Route("test/SaveRolesToDb")]
-        public IActionResult SaveRoles()
-        {
-            List<Role> roles = new List<Role>();
-            Role r1 = new Role { Name = "Regular", RoleId = 0 };
-            Role r2 = new Role { Name = "Premium", RoleId = 0 };
-            Role r3 = new Role { Name = "Admin", RoleId = 0 };
-            roles.Add(r1);
-            roles.Add(r2);
-            roles.Add(r3);
-            foreach (var role in roles)
-            {
-                _dbContext.Roles.Add(role);
-            }
-            _dbContext.SaveChanges();
-            return Ok();
-        }
+       
     }
 }

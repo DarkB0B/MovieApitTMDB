@@ -82,29 +82,7 @@ namespace APIef.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("test/GetMoviePerGenre")]
-        public async Task<JsonResult> Get(int genre)
-        {
 
-            List<Movie> movies = new List<Movie>();
-           
-                movies = await externalApiService.GetMoviesPerGenre(genre, 1, true);
-         
-            //randomly choose some movies from movies list                 
-            return new JsonResult(movies);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("test/GetMoviesFromDb")]
-        public async Task<JsonResult> GetMoviesFromDb()
-        {
-            List<Movie> movies = new List<Movie>();
-            movies = await _movieService.GetMoviesAsync();
-            return new JsonResult(movies);
-        }
 
     }
 }

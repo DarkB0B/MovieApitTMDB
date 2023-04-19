@@ -82,29 +82,15 @@ namespace APIef.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("test/SaveCollectionInDbFromWeb")]
-        public async Task<IActionResult> Postsave(int id)
+        [Route("test/CreateTestCollection")]
+        public async Task<IActionResult> PostTeste()
         {
+            int id = 28;
             MovieCollection movieCollection = new MovieCollection();
             List<Movie> movies = await externalApiService.GetMoviesPerGenre(id,1,true);
             movieCollection.Id = 0;
-            movieCollection.Title = "test";
-            movieCollection.Description = "test";
-            MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
-            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
-
-            return Ok();
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [Route("test/SaveCollectionInDb")]
-        public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
-        {
-            movieCollection.Id = 0;
-            List<Movie> movies = new List<Movie>();
-            foreach (Movie movie in movieCollection.Movies) { movies.Add(movie); };
-
-
+            movieCollection.Title = "Test Collection";
+            movieCollection.Description = "Im Here Just For Testing";
             MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
 
