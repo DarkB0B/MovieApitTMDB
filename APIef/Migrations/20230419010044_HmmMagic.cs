@@ -2,10 +2,12 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace APIef.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class HmmMagic : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -169,6 +171,51 @@ namespace APIef.Migrations
                         principalTable: "Movies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "dbId", "Name", "tmdbId" },
+                values: new object[,]
+                {
+                    { 1, "Action", 28 },
+                    { 2, "Adventure", 12 },
+                    { 3, "Animation", 16 },
+                    { 4, "Comedy", 35 },
+                    { 5, "Crime", 80 },
+                    { 6, "Documentary", 99 },
+                    { 7, "Drama", 18 },
+                    { 8, "Family", 10751 },
+                    { 9, "Fantasy", 14 },
+                    { 10, "History", 36 },
+                    { 11, "Horror", 27 },
+                    { 12, "Music", 10402 },
+                    { 13, "Mystery", 9648 },
+                    { 14, "Romance", 10749 },
+                    { 15, "Science Fiction", 878 },
+                    { 16, "TV Movie", 10770 },
+                    { 17, "Thriller", 53 },
+                    { 18, "War", 10752 },
+                    { 19, "Western", 37 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RoleId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Regular" },
+                    { 2, "Premium" },
+                    { 3, "Admin" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserName", "IsPremium", "Password", "RoleId" },
+                values: new object[,]
+                {
+                    { "admin", true, "admin", 3 },
+                    { "regular", false, "regular", 1 }
                 });
 
             migrationBuilder.CreateIndex(

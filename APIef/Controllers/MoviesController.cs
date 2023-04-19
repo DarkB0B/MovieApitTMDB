@@ -15,7 +15,7 @@ using System.Data;
 
 namespace APIef.Controllers
 {
-    
+    [Authorize(Roles = "Regular, Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class MoviesController : ControllerBase

@@ -13,7 +13,7 @@ using System.Data;
 
 namespace APIef.Controllers
 {
-    
+    [Authorize(Roles = "Regular, Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class MovieCollectionsController : ControllerBase
@@ -28,7 +28,6 @@ namespace APIef.Controllers
         }
 
         // GET api/movie-collections/{id}
-        [Authorize(Roles = "Regular")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -51,7 +50,6 @@ namespace APIef.Controllers
         }
 
         // GET api/movie-collections
-        [Authorize(Roles = "Regular")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

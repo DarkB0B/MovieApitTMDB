@@ -2,6 +2,7 @@ using APIef.Data;
 using APIef.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -9,36 +10,45 @@ using System.Text.Json;
 namespace APItest
 {
     [TestClass]
-    public class UnitTest1
+    public class CreateTests
     {
 
-
-        public string Token;
-        public UnitTest1()
-        {
-            Token = GetToken().Result;
-        }
-        public async Task<string> GetToken()
+        HttpClient httpClient;
+        public string RegularToken;
+        public string AdminToken;
+        public CreateTests()
         {
             var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
+            var _httpClient = webAppFactory.CreateDefaultClient();
+            httpClient = _httpClient;
+            RegularToken = GetToken("regular", "regular").Result;
+            AdminToken = GetToken("admin", "admin").Result;
+        }
+        public async Task<string> GetToken(string username, string pass)
+        {
 
-            var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword" };
+
+            var userCredentials = new UserCredentials { UserName = username, Password = pass };
             var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync("/api/Tokens", content);
             var body = await response.Content.ReadAsStringAsync();
-            return body;
-        }
-        
+            JsonDocument doc = JsonDocument.Parse(body);
+            JsonElement root = doc.RootElement;
+            string token = root.GetProperty("token").GetString();
 
-        [TestMethod]
+
+            return token;
+        }
+
+
+        //--------------User---------------------
+        [TestMethod, TestCategory("User")]
 
         public async Task CreateUser()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword"};
+
+            var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword" };
             var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
 
 
@@ -46,28 +56,24 @@ namespace APItest
 
             response.EnsureSuccessStatusCode();
 
-
         }
-        [TestMethod]
+        [TestMethod, TestCategory("User")]
         public async Task LoginWrongPass()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
+
 
             var userCredentials = new UserCredentials { UserName = "newuser", Password = "xxxx" };
             var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync("/api/Users", content);
+            var response = await httpClient.PostAsync("/api/Token", content);
 
             Assert.IsFalse(response.IsSuccessStatusCode);
         }
 
 
-        [TestMethod]
-        public async Task Login()
+        [TestMethod, TestCategory("User")]
+        public async Task LoginCorrectPass()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
 
             var userCredentials = new UserCredentials { UserName = "newuser", Password = "oldpassword" };
             var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
@@ -77,32 +83,37 @@ namespace APItest
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(body);
-            Token = body;
 
         }
-
-        
-
-        [TestMethod]
-
-        public async Task CheckIfUserPasswordChanged()
+        [TestMethod, TestCategory("User")]
+        public async Task ChangePassword()
         {
 
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
             var userCredentials = new ChangePassword { UserName = "newuser", OldPassword = "oldpassword", NewPassword = "newPassword" };
             var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
-            
+
             var response = await httpClient.PatchAsync($"/api/Users/{userCredentials.UserName}", content);
-            response.EnsureSuccessStatusCode();
-            var body = await response.Content.ReadAsStringAsync();
-            Assert.IsNotNull(body.Contains("changedpass123"));
+
+
+            Assert.IsTrue(response.IsSuccessStatusCode);
+
         }
+        [TestMethod, TestCategory("User")]
+        public async Task IsPasswordChanged()
+        {
 
-        
 
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
+            var userCredentials = new UserCredentials { UserName = "newuser", Password = "newPassword" };
+
+            var response = await httpClient.GetAsync($"/api/Users/{userCredentials.UserName}");
+            Assert.IsTrue(response.IsSuccessStatusCode);
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.IsTrue(body.Contains("newPassword"));
+
+        }
 
 
 
@@ -114,9 +125,8 @@ namespace APItest
         [TestMethod]
         public async Task CheckIfGenreGetterHasData()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
 
             var response = await httpClient.GetAsync("/api/Genres");
 
@@ -130,9 +140,8 @@ namespace APItest
         [TestMethod]
         public async Task CheckIfGenreGetterDosentReturnNull()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
 
             var response = await httpClient.GetAsync("/api/Genres");
 
@@ -147,11 +156,10 @@ namespace APItest
         [TestMethod]
         public async Task CheckIfRoleGetterDosentReturnNull()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
-            var response = await httpClient.GetAsync("/api/Genres");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+
+            var response = await httpClient.GetAsync("/api/Roles");
 
             response.EnsureSuccessStatusCode();
 
@@ -162,9 +170,8 @@ namespace APItest
 
         public async Task CheckIfRoleGetterHasData()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
             var response = await httpClient.GetAsync("/api/Roles");
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
@@ -174,66 +181,60 @@ namespace APItest
 
         //-----------------Users--------------------------
 
-        
+
 
         [TestMethod]
 
         public async Task CheckIfUserGetterDosentReturnNull()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
             var response = await httpClient.GetAsync("/api/Users");
             response.EnsureSuccessStatusCode();
             Assert.IsNotNull(response.Content);
         }
 
-       
+
         [TestMethod]
 
         public async Task CheckIfUserGetterGetsnewuser()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
             var response = await httpClient.GetAsync("/api/Users");
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(body.Contains("newuser"));
         }
 
-        
-        
+
+        //-----------------Deletes------------------------
+
 
         [TestMethod]
         public async Task DeleteUserDoesNotExist()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
 
             var response = await httpClient.DeleteAsync("/api/Users/username");
 
-           Assert.IsFalse(response.IsSuccessStatusCode);
+            Assert.IsFalse(response.IsSuccessStatusCode);
         }
-        
+
         [TestMethod]
         public async Task Deletenewuser()
         {
-            var webAppFactory = new WebApplicationFactory<Program>();
-            var httpClient = webAppFactory.CreateDefaultClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
 
             var response = await httpClient.DeleteAsync("/api/Users/newuser");
 
             response.EnsureSuccessStatusCode();
         }
-        
-
-        
-
-
 
     }
-
+    
 }
+
+

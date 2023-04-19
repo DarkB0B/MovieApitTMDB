@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APIef.Controllers
 {
-    [Authorize(Roles = "Regular")]
+    [Authorize(Roles = "Regular, Admin")]
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
@@ -145,7 +145,7 @@ namespace APIef.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("test/admin")]
+        [Route("admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] UserCredentials userCredentials)
         {
             try
@@ -158,5 +158,6 @@ namespace APIef.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
             }
         }
+        
     }
 }

@@ -13,7 +13,7 @@ using System.Data;
 
 namespace APIef.Controllers
 {
-    [Authorize(Roles = "Regular")]
+    [Authorize(Roles = "Regular, Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class RoomsController : ControllerBase

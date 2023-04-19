@@ -33,6 +33,7 @@ builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     }
 );
+
 builder.Services.AddTransient<IUsers, UserService>();
 builder.Services.AddTransient<IRooms, RoomService>();
 builder.Services.AddTransient<IMovies, MoviesService>();
@@ -54,7 +55,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
+{   
     app.UseSwagger();
     app.UseSwaggerUI();
 }

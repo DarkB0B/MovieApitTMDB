@@ -8,7 +8,7 @@ using System.Data;
 
 namespace APIef.Controllers
 {
-    
+    [Authorize(Roles = "Regular, Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class GenresController : ControllerBase
@@ -20,7 +20,7 @@ namespace APIef.Controllers
             _dbContext = context;
         }
 
-        [Authorize(Roles = "Regular")]
+        
         [HttpGet]
         public async Task<JsonResult> GetGenres()
         {
