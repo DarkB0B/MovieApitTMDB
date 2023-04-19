@@ -12,6 +12,7 @@ using APIef.Data;
 using APIef.Interface;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace APIef.Controllers
 {
@@ -22,12 +23,18 @@ namespace APIef.Controllers
     {
 
 
-        readonly ExternalApiService externalApiService = new ExternalApiService();
+        private readonly ExternalApiService externalApiService;
         private readonly IMovies _movieService;
+        private readonly IConfiguration _configuration;
+        private string apiKey;
 
-        public MoviesController(IMovies movieService)
+        public MoviesController(IMovies movieService, IConfiguration configuration)
         {
             _movieService = movieService;
+            _configuration = configuration;
+            apiKey = _configuration.GetValue<string>("APIKey");
+            externalApiService = new ExternalApiService(apiKey);
+            _configuration = configuration;
         }
 
         [Authorize(Roles = "Admin")]
@@ -82,7 +89,7 @@ namespace APIef.Controllers
 
         }
 
-
+        
 
     }
 }

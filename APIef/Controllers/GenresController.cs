@@ -36,20 +36,7 @@ namespace APIef.Controllers
             return new JsonResult(Ok());
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [Route("test/SaveAll")]
-        public async Task<JsonResult> SaveGenres()
-        {
-
-            List<Genre> genres = await externalApiService.GetGenres();
-            foreach (var genre in genres)
-            {
-                await _dbContext.Genres.AddAsync(genre);
-            }
-            await _dbContext.SaveChangesAsync();
-            return new JsonResult(genres);
-        }
+        
 
     }   
 }

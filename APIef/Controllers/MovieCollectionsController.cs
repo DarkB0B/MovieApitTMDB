@@ -20,11 +20,16 @@ namespace APIef.Controllers
     {
         private readonly IMovieCollections _movieCollectionsService;
         private readonly DataContext _context;
-        readonly ExternalApiService externalApiService = new ExternalApiService();
-        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context)
+        readonly ExternalApiService externalApiService;
+        private readonly IConfiguration _configuration;
+        private string apiKey;
+        public MovieCollectionsController(IConfiguration configuration , IMovieCollections movieCollectionsService, DataContext context)
         {
+            _configuration = configuration;
             _movieCollectionsService = movieCollectionsService;
             _context = context;
+            apiKey = _configuration.GetValue<string>("APIKey");
+            externalApiService = new ExternalApiService(apiKey);
         }
 
         // GET api/movie-collections/{id}
@@ -95,7 +100,7 @@ namespace APIef.Controllers
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
 
             return Ok();
-        }
+        }       
 
         [Authorize(Roles = "Admin")]
         [HttpPut]
