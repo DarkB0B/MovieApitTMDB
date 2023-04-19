@@ -43,7 +43,12 @@ namespace APItest
 
 
         //--------------User---------------------
-        [TestMethod, TestCategory("User")]
+
+
+
+
+
+        [TestMethod]
 
         public async Task CreateUser()
         {
@@ -57,7 +62,9 @@ namespace APItest
             response.EnsureSuccessStatusCode();
 
         }
-        [TestMethod, TestCategory("User")]
+
+
+        [TestMethod]
         public async Task LoginWrongPass()
         {
 
@@ -71,7 +78,7 @@ namespace APItest
         }
 
 
-        [TestMethod, TestCategory("User")]
+        [TestMethod]
         public async Task LoginCorrectPass()
         {
 
@@ -85,7 +92,9 @@ namespace APItest
             Assert.IsNotNull(body);
 
         }
-        [TestMethod, TestCategory("User")]
+        [TestCategory("ChangePassword")]
+
+        [TestMethod]
         public async Task ChangePassword()
         {
 
@@ -100,7 +109,8 @@ namespace APItest
             Assert.IsTrue(response.IsSuccessStatusCode);
 
         }
-        [TestMethod, TestCategory("User")]
+        [TestCategory("ChangePassword")]
+        [TestMethod]
         public async Task IsPasswordChanged()
         {
 
@@ -114,9 +124,6 @@ namespace APItest
             Assert.IsTrue(body.Contains("newPassword"));
 
         }
-
-
-
 
 
 
@@ -234,7 +241,40 @@ namespace APItest
         }
 
     }
-    
+    [TestClass]
+    public class CheckTests
+    {
+        HttpClient httpClient;
+        public string RegularToken;
+        public string AdminToken;
+        public CheckTests()
+        {
+            var webAppFactory = new WebApplicationFactory<Program>();
+            var _httpClient = webAppFactory.CreateDefaultClient();
+            httpClient = _httpClient;
+            RegularToken = GetToken("regular", "regular").Result;
+            AdminToken = GetToken("admin", "admin").Result;
+        }
+        public async Task<string> GetToken(string username, string pass)
+        {
+
+
+            var userCredentials = new UserCredentials { UserName = username, Password = pass };
+            var content = new StringContent(JsonSerializer.Serialize(userCredentials), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("/api/Tokens", content);
+            var body = await response.Content.ReadAsStringAsync();
+            JsonDocument doc = JsonDocument.Parse(body);
+            JsonElement root = doc.RootElement;
+            string token = root.GetProperty("token").GetString();
+
+
+            return token;
+        }
+
+       
+
+    }
 }
 
 
