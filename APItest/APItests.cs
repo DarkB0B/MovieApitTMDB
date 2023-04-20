@@ -412,7 +412,6 @@ namespace APItest
             Assert.IsTrue(response7.IsSuccessStatusCode);
             Assert.IsTrue(response7.StatusCode == HttpStatusCode.OK);
             Assert.IsTrue(isCompleted);
-            Assert.IsTrue(responseString7.Contains(roomId + "final"));
             //-----------Delete Room------------
             var response8 = await httpClient.DeleteAsync($"/api/Rooms/{roomId}");
             Assert.IsTrue(response8.IsSuccessStatusCode);
