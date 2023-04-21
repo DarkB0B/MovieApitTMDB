@@ -308,7 +308,7 @@ namespace APItest
 
         }
         [TestMethod]
-        public async Task Col4DeleteMovieCollection()
+        public async Task Col5DeleteMovieCollection()
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
 
@@ -316,7 +316,7 @@ namespace APItest
             Assert.IsTrue(response.IsSuccessStatusCode);
         }
         [TestMethod]
-        public async Task zzzzCol5GetMovieCollectionByIdAfterDelete()
+        public async Task Col7GetMovieCollectionByIdAfterDelete()
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
 
@@ -327,7 +327,37 @@ namespace APItest
 
         //--------------Rooms-----------------
         [TestMethod]
-        public async Task CreateRoomDiscoverDoSomeStuffAndDelete()
+        public async Task TryToCreateRoomUnauthorized()
+        {
+            List<int> x = new List<int>();
+            var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(x), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("/api/Rooms?option=collection&collectionId=1", content);
+            Assert.IsFalse(response.IsSuccessStatusCode);
+            Assert.IsTrue(response.StatusCode ==  HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public async Task TryToCreateRoomDiscoverWithoutNecessaryData()
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
+            var response = await httpClient.PostAsync("/api/Rooms?option=discover", null);
+            Assert.IsFalse(response.IsSuccessStatusCode);
+
+        }
+
+        [TestMethod]
+        public async Task TryToCreateRoomCollectionWithoutCecesarryData()
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
+            var response = await httpClient.PostAsync("/api/Rooms?option=collection", null);
+            Assert.IsFalse(response.IsSuccessStatusCode);
+
+        }
+
+
+        [TestMethod]
+        public async Task Col4CollectionRoomFlowTest()
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
             List<int> x = new List<int>();
@@ -337,18 +367,73 @@ namespace APItest
 
             var responseString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<dynamic>(responseString);
-            string roomId = result.id;
+            string roomId = result.id.ToString();
 
             Debug.WriteLine(roomId);
             Assert.IsTrue(response.IsSuccessStatusCode);
             Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
-            Assert.IsTrue(responseString.Contains("id"));
+            Assert.IsTrue(responseString.Contains(roomId));
             Assert.IsNotNull(roomId);
+            //----------Get Room by Id----------------  
+
+            var response2 = await httpClient.GetAsync($"/api/Rooms/{roomId}");
+            var responseString2 = await response2.Content.ReadAsStringAsync();
+            var result2 = JsonConvert.DeserializeObject<dynamic>(responseString2);
+
+            string thisId = result2.id;
+            Debug.WriteLine(thisId);
+            Assert.IsTrue(response2.IsSuccessStatusCode);
+            Assert.IsTrue(response2.StatusCode == HttpStatusCode.OK);
+            Assert.AreEqual(thisId, result2.id.ToString());
+
+            //----------Add User To Room--------------
+
+            var response3 = await httpClient.PatchAsync($"/api/Rooms/{roomId}/users?option=add", null);
+            Assert.IsTrue(response3.IsSuccessStatusCode);
+            Assert.IsTrue(response3.StatusCode == HttpStatusCode.OK);
+
+            //-----------Start Room----------------
+            var response4 = await httpClient.PatchAsync($"/api/Rooms/{roomId}", null);
+            var responseString4 = await response4.Content.ReadAsStringAsync();
+            var result4 = JsonConvert.DeserializeObject<dynamic>(responseString4);
+            Assert.AreEqual("True", result4.isStarted.ToString());
+            Assert.AreEqual(result4.usersInRoom.ToString(), "2");
+            Assert.IsTrue(response4.IsSuccessStatusCode);
+            Assert.IsTrue(response4.StatusCode == HttpStatusCode.OK);
+            //-----------Post MovieList To Room----------------
+            List<Movie> movies = new List<Movie> { new Movie { Id = "string", BackdropPath = "string", OriginalTitle = "string", Overview = "string", Popularity = "string", PosterPath = "string", ReleaseDate = "string", Title = "string", VoteAvredge = "string", VoteCount = "string" } };
+            var content5 = new StringContent(System.Text.Json.JsonSerializer.Serialize(movies), Encoding.UTF8, "application/json");
+            var response5 = await httpClient.PostAsync($"/api/Rooms/{roomId}/movieLists", content5);
+            var response6 = await httpClient.PostAsync($"/api/Rooms/{roomId}/movieLists", content5);
+
+            Assert.IsTrue(response5.IsSuccessStatusCode);
+            Assert.IsTrue(response5.StatusCode == HttpStatusCode.OK);
+            Assert.IsTrue(response6.IsSuccessStatusCode);
+            Assert.IsTrue(response6.StatusCode == HttpStatusCode.OK);
+
+            //----------Check If Room Completed
+            var response7 = await httpClient.GetAsync($"/api/Rooms/{roomId}");
+            var responseString7 = await response7.Content.ReadAsStringAsync();
+            var result7 = JsonConvert.DeserializeObject<dynamic>(responseString7);
+
+
+
+            Assert.IsTrue(response7.IsSuccessStatusCode);
+            Assert.IsTrue(response7.StatusCode == HttpStatusCode.OK);
+            Assert.AreEqual("True", result7.isCompleted.ToString());
+            //-----------Delete Room------------
+            var response8 = await httpClient.DeleteAsync($"/api/Rooms/{roomId}");
+            Assert.IsTrue(response8.IsSuccessStatusCode);
+            Assert.IsTrue(response8.StatusCode == HttpStatusCode.OK);
+            //-----------Check if Room Was Deleted-------
+
+            var response9 = await httpClient.GetAsync($"api/Rooms/{roomId}");
+            Assert.IsFalse(response9.IsSuccessStatusCode);
 
         }
 
         [TestMethod]
-        public async Task Room2CreateRoomDiscover()
+        public async Task RRDiscoverRoomFlowTest()
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RegularToken);
             List<int> x = new List<int> { 12, 28};
@@ -387,8 +472,8 @@ namespace APItest
             var response4 = await httpClient.PatchAsync($"/api/Rooms/{roomId}", null);
             var responseString4 = await response4.Content.ReadAsStringAsync();
             var result4 = JsonConvert.DeserializeObject<dynamic>(responseString4);
-            Assert.AreEqual(result4.IsStarted.ToString(), "started");
-            Assert.AreEqual(result4.users.Count.ToString(), "2");
+            Assert.AreEqual("True", result4.isStarted.ToString());
+            Assert.AreEqual(result4.usersInRoom.ToString(), "2");
             Assert.IsTrue(response4.IsSuccessStatusCode);
             Assert.IsTrue(response4.StatusCode == HttpStatusCode.OK);
             //-----------Post MovieList To Room----------------
@@ -404,31 +489,27 @@ namespace APItest
 
             //----------Check If Room Completed
             var response7 = await httpClient.GetAsync($"/api/Rooms/{roomId}");
-            var responseString7 = await response2.Content.ReadAsStringAsync();
-            var result7 = JsonConvert.DeserializeObject<dynamic>(responseString2);
+            var responseString7 = await response7.Content.ReadAsStringAsync();
+            var result7 = JsonConvert.DeserializeObject<dynamic>(responseString7);
 
-            bool isCompleted = result7.IsCompleted;
-            Debug.WriteLine(isCompleted);
+            
+            
             Assert.IsTrue(response7.IsSuccessStatusCode);
             Assert.IsTrue(response7.StatusCode == HttpStatusCode.OK);
-            Assert.IsTrue(isCompleted);
+            Assert.AreEqual("True", result7.isCompleted.ToString());
             //-----------Delete Room------------
             var response8 = await httpClient.DeleteAsync($"/api/Rooms/{roomId}");
             Assert.IsTrue(response8.IsSuccessStatusCode);
             Assert.IsTrue(response8.StatusCode == HttpStatusCode.OK);
+            //-----------Check if Room Was Deleted-------
 
+            var response9 = await httpClient.GetAsync($"api/Rooms/{roomId}");
+            Assert.IsFalse(response9.IsSuccessStatusCode);
 
         }
+
+
         
-
-
-
-
-
-
-
-
-
 
 
     }
