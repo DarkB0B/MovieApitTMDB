@@ -19,15 +19,6 @@ services:
     ports:
         - 8081:80
         - 4434:443
-  flutter:
-    container_name: flutter
-    image: ${DOCKER_REGISTRY-}flutter
-    build:
-      context: .
-      dockerfile: FLUTTER_PATH/Dockerfile
-    ports:
-        - 8081:80
-        - 4434:443
   db:
     container_name: mssql
     image: mcr.microsoft.com/mssql/server:2022-latest

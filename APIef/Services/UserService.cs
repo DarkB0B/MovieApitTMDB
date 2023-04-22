@@ -33,14 +33,22 @@ namespace APIef.Services
 
         public User GetUser(string userName)
         {
-
-            User? user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.UserName == userName);
-
-            if (user != null)
+            try
             {
+                User? user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.UserName == userName);
 
-                return user;
+                if (user != null)
+                {
+
+                    return user;
+                }
             }
+            catch
+            {
+                return null;
+            }   
+
+            
 
             throw new ArgumentNullException();
 

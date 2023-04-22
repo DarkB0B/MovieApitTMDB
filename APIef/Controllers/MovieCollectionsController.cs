@@ -21,14 +21,17 @@ namespace APIef.Controllers
     {
         private readonly IMovieCollections _movieCollectionsService;
         private readonly DataContext _context;
-        private IConfiguration configuration;
-        private readonly ExternalApiService2 externalApiService;
+        private IConfiguration _configuration;
+        readonly ExternalApiService externalApiService;
 
-        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context)
+        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context, IConfiguration configuration)
         {
             _movieCollectionsService = movieCollectionsService;
+            _configuration = configuration;
             _context = context;
-            externalApiService = new ExternalApiService2(configuration);
+            _configuration = configuration;
+            string apiKey = _configuration.GetValue<string>("ApiKey");
+            externalApiService = new ExternalApiService(apiKey);
         }
 
         // GET api/movie-collections/{id}
