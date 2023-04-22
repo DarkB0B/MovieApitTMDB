@@ -21,13 +21,18 @@ namespace APIef.Controllers
     public class MoviesController : ControllerBase
     {
 
+        private readonly IConfiguration _configuration;
 
-        readonly ExternalApiService externalApiService = new ExternalApiService();
+        readonly ExternalApiService externalApiService;
         private readonly IMovies _movieService;
 
-        public MoviesController(IMovies movieService)
+        public MoviesController(IMovies movieService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _movieService = movieService;
+            _configuration = configuration;
+            string apiKey = _configuration.GetValue<string>("ApiKey");
+            externalApiService = new ExternalApiService(apiKey);
         }
 
         [Authorize(Roles = "Admin")]

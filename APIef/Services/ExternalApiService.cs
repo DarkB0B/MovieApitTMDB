@@ -8,10 +8,16 @@ namespace APIef.Services
 {
     public class ExternalApiService
     {
-        private string apiKey = "2c3773c58b96fc195869c5f3162ff399";
+        private string apiKey;
+       
        
         Deserializer deserializer = new Deserializer();
-        
+        public ExternalApiService(String key)
+        {
+            
+
+            apiKey = key;
+        }
 
 
         public async Task<List<Genre>> GetGenres()

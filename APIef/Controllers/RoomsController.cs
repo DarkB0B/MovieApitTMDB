@@ -22,9 +22,13 @@ namespace APIef.Controllers
         private readonly DataContext _context;
         private readonly IMovies _movieService;
         private readonly IMovieCollections _movieCollectionsService;
-        readonly ExternalApiService externalApiService = new ExternalApiService();
-        public RoomsController(IRooms roomService, DataContext context, IMovies movieService, IMovieCollections movieCollectionsService)
+        IConfiguration _configuration;
+        readonly ExternalApiService externalApiService;
+        public RoomsController(IRooms roomService, DataContext context, IMovies movieService, IMovieCollections movieCollectionsService, IConfiguration configuration)
         {
+            _configuration = configuration;
+           string apiKey = _configuration.GetValue<string>("ApiKey");
+            externalApiService = new ExternalApiService(apiKey);
             _movieCollectionsService = movieCollectionsService;
             _movieService = movieService;
             _roomService = roomService;
