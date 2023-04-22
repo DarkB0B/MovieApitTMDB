@@ -10,6 +10,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using System.Configuration;
 
 namespace APIef.Controllers
 {
@@ -20,11 +21,15 @@ namespace APIef.Controllers
     {
         private readonly IMovieCollections _movieCollectionsService;
         private readonly DataContext _context;
-        readonly ExternalApiService externalApiService = new ExternalApiService();
-        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context)
+        readonly ExternalApiService externalApiService;
+        IConfiguration _configuration;
+        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context, IConfiguration configuration)
         {
             _movieCollectionsService = movieCollectionsService;
             _context = context;
+            _configuration = configuration;
+            string apiKey = _configuration.GetValue<string>("ApiKey");
+            externalApiService = new ExternalApiService(apiKey);
         }
 
         // GET api/movie-collections/{id}
