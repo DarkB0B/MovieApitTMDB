@@ -7,18 +7,27 @@ services:
     build:
       context: .
       dockerfile: Socket/Dockerfile
-    expose:
-        - 80
-        - 443
+    ports:
+        - 8080:80
+        - 4433:80
   api:
     container_name: api
-    image: ${DOCKER_REGISTRY-}pai
+    image: ${DOCKER_REGISTRY-}api
     build:
       context: .
       dockerfile: APIef/Dockerfile
-    expose:
-        - 80
-        - 443
+    ports:
+        - 8081:80
+        - 4434:443
+  flutter:
+    container_name: flutter
+    image: ${DOCKER_REGISTRY-}flutter
+    build:
+      context: .
+      dockerfile: FLUTTER_PATH/Dockerfile
+    ports:
+        - 8081:80
+        - 4434:443
   db:
     container_name: mssql
     image: mcr.microsoft.com/mssql/server:2022-latest
