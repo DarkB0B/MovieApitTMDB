@@ -8,28 +8,27 @@ namespace APIef.Services
     public class UserService : IUsers
     {
         readonly DataContext _context;
+
         public UserService(DataContext context)
         {
             _context = context;
         }
+
         //implement IUsers interface with handling exceptions
         public void AddUser(User user)
         {
-            try
-            {
-                Role? role = _context.Roles.Find(1);
-                if (role != null)
-                {
-                    user.Role = role;
-                }
 
-                _context.Users.Add(user);
-                _context.SaveChanges();
-            }
-            catch
+            Role? role = _context.Roles.Find(1);
+            if (role != null)
             {
-                throw;
+                user.Role = role;
             }
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+
+
         }
 
         public User GetUser(string userName)
@@ -43,254 +42,216 @@ namespace APIef.Services
 
                     return user;
                 }
-                throw new ArgumentNullException();
             }
             catch
             {
-                throw;
-            }
+                return null;
+            }   
+
+            
+
+            throw new ArgumentNullException();
+
+
+
         }
 
         public void DeleteUser(string userName)
         {
-            try
+
+            User? user = _context.Users.Find(userName);
+            if (user != null)
             {
-                User? user = _context.Users.Find(userName);
-                if (user != null)
-                {
-                    _context.Users.Remove(user);
-                    _context.SaveChanges();
-                }
-                throw new ArgumentNullException();
+                _context.Users.Remove(user);
+                _context.SaveChanges();
             }
-            catch
-            {
-                throw;
-            }
+
+
+
+
+
         }
 
         public void UpdateUser(User user)
         {
-            try
-            {
-                _context.Users.Update(user);
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
         }
 
         public bool UserExists(string userName)
         {
-            try
-            {
-                return _context.Users.Any(u => u.UserName == userName);
-            }
-            catch
-            {
-                throw;
-            }
+
+            return _context.Users.Any(u => u.UserName == userName);
+
         }
 
         public string CheckCredentials(UserCredentials userCredentials)
         {
-            try
+
+            User? user = _context.Users.Find(userCredentials.UserName);
+            if (user != null)
             {
-                User? user = _context.Users.Find(userCredentials.UserName);
-                if (user != null)
+                if (user.Password == userCredentials.Password)
                 {
-                    if (user.Password == userCredentials.Password)
-                    {
-                        return "OK";
-                    }
-                    else
-                    {
-                        return "Wrong password";
-                    }
+                    return "OK";
                 }
-                return "User Does Not Exist";
+                else
+                {
+                    return "Wrong password";
+                }
             }
-            catch
-            {
-                throw;
-            }
+
+            return "User Does Not Exist";
+
         }
 
 
         public void ChangePassword(UserCredentials userCredentials)
         {
-            try
+
+            User? user = _context.Users.Find(userCredentials.UserName);
+            if (user != null)
             {
-                User? user = _context.Users.Find(userCredentials.UserName);
-                if (user != null)
-                {
-                    user.Password = userCredentials.Password;
-                    _context.Users.Update(user);
-                    _context.SaveChanges();
-                }
-                else
-                {
-                    throw new ArgumentException("User Does Not Exist");
-                }
+                user.Password = userCredentials.Password;
+                _context.Users.Update(user);
+                _context.SaveChanges();
             }
-            catch
+            else
             {
-                throw;
+                throw new ArgumentException("User Does Not Exist");
             }
+
         }
 
         public List<User> GetUsers()
         {
-            try
-            {
-                return _context.Users.Include(u => u.Role).ToList();
-            }
-            catch
-            {
-                throw;
-            }
+
+            return _context.Users.Include(u => u.Role).ToList();
+
         }
+
         public async Task AddUserAsync(User user)
         {
-            try
-            {
-                Role? role = await _context.Roles.FindAsync(1);
-                if (role != null)
-                {
-                    user.Role = role;
-                }
 
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
-            }
-            catch
+            Role? role = await _context.Roles.FindAsync(1);
+            if (role != null)
             {
-                throw;
+                user.Role = role;
             }
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task AddAdmin(User user)
+        {
+
+            Role? role = await _context.Roles.FindAsync(3);
+            if (role != null)
+            {
+                user.Role = role;
+            }
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task<User> GetUserAsync(string userName)
         {
-            try
-            {
-                User? user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.UserName == userName);
 
-                if (user != null)
-                {
-                    return user;
-                }
-                throw new ArgumentNullException();
-            }
-            catch
+            User? user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.UserName == userName);
+
+            if (user != null)
             {
-                throw;
+                return user;
             }
+
+            throw new ArgumentNullException();
+
         }
 
         public async Task DeleteUserAsync(string userName)
         {
-            try
+
+            User? user = await _context.Users.FindAsync(userName);
+            if (user != null)
             {
-                User? user = await _context.Users.FindAsync(userName);
-                if (user != null)
-                {
-                    _context.Users.Remove(user);
-                    await _context.SaveChangesAsync();
-                }
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
                 throw new ArgumentNullException();
             }
-            catch
-            {
-                throw;
-            }
+
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            try
-            {
-                _context.Users.Update(user);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task<bool> UserExistsAsync(string userName)
         {
-            try
-            {
-                return await _context.Users.AnyAsync(u => u.UserName == userName);
-            }
-            catch
-            {
-                throw;
-            }
+
+            return await _context.Users.AnyAsync(u => u.UserName == userName);
+
         }
 
         public async Task<string> CheckCredentialsAsync(UserCredentials userCredentials)
         {
-            try
+
+            User? user = await _context.Users.FindAsync(userCredentials.UserName);
+            if (user != null)
             {
-                User? user = await _context.Users.FindAsync(userCredentials.UserName);
-                if (user != null)
+                if (user.Password == userCredentials.Password)
                 {
-                    if (user.Password == userCredentials.Password)
-                    {
-                        return "OK";
-                    }
-                    else
-                    {
-                        return "Wrong password";
-                    }
+                    return "OK";
                 }
-                return "User Does Not Exist";
+                else
+                {
+                    return "Wrong password";
+                }
             }
-            catch
-            {
-                throw;
-            }
+
+            return "User Does Not Exist";
+
         }
 
         public async Task ChangePasswordAsync(UserCredentials userCredentials)
         {
-            try
+
+            User? user = await _context.Users.FindAsync(userCredentials.UserName);
+            if (user != null)
             {
-                User? user = await _context.Users.FindAsync(userCredentials.UserName);
-                if (user != null)
-                {
-                    user.Password = userCredentials.Password;
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new ArgumentException("User Does Not Exist");
-                }
+                user.Password = userCredentials.Password;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
             }
-            catch
+            else
             {
-                throw;
+                throw new ArgumentException("User Does Not Exist");
             }
+
+
         }
 
         public async Task<List<User>> GetUsersAsync()
         {
-            try
-            {
-                return await _context.Users.Include(u => u.Role).ToListAsync();
-            }
-            catch
-            {
-                throw;
-            }
+
+            return await _context.Users.Include(u => u.Role).ToListAsync();
+
         }
     }
-
-
 }
+
+
+
 

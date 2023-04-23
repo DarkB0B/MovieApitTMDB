@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APIef.Controllers
 {
-
+    [Authorize(Roles = "Admin, Regular")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -18,6 +18,7 @@ namespace APIef.Controllers
             _dbContext = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddRole([FromBody] string role)
         {
@@ -25,28 +26,25 @@ namespace APIef.Controllers
             _dbContext.SaveChanges();
             return Ok();
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetRoles()
         {
             return Ok(_dbContext.Roles);
         }
-        [HttpPost]
-        [Route("SaveRolesToDb")]
-        public IActionResult SaveRoles()
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteRole(int id)
         {
-            List<Role> roles = new List<Role>();
-            Role r1 = new Role { Name = "Regular", RoleId = 0 };
-            Role r2 = new Role { Name = "Premium", RoleId = 0 };
-            Role r3 = new Role { Name = "Admin", RoleId = 0 };
-            roles.Add(r1);
-            roles.Add(r2);
-            roles.Add(r3);
-            foreach (var role in roles)
-            {
-                _dbContext.Roles.Add(role);
-            }
+            var role = _dbContext.Roles.FirstOrDefault(r => r.RoleId == id);
+            _dbContext.Roles.Remove(role);
             _dbContext.SaveChanges();
             return Ok();
         }
+
+       
     }
 }

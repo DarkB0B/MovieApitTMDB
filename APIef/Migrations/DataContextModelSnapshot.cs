@@ -39,6 +39,122 @@ namespace APIef.Migrations
                     b.HasKey("dbId");
 
                     b.ToTable("Genres");
+
+                    b.HasData(
+                        new
+                        {
+                            dbId = 1,
+                            Name = "Action",
+                            tmdbId = 28
+                        },
+                        new
+                        {
+                            dbId = 2,
+                            Name = "Adventure",
+                            tmdbId = 12
+                        },
+                        new
+                        {
+                            dbId = 3,
+                            Name = "Animation",
+                            tmdbId = 16
+                        },
+                        new
+                        {
+                            dbId = 4,
+                            Name = "Comedy",
+                            tmdbId = 35
+                        },
+                        new
+                        {
+                            dbId = 5,
+                            Name = "Crime",
+                            tmdbId = 80
+                        },
+                        new
+                        {
+                            dbId = 6,
+                            Name = "Documentary",
+                            tmdbId = 99
+                        },
+                        new
+                        {
+                            dbId = 7,
+                            Name = "Drama",
+                            tmdbId = 18
+                        },
+                        new
+                        {
+                            dbId = 8,
+                            Name = "Family",
+                            tmdbId = 10751
+                        },
+                        new
+                        {
+                            dbId = 9,
+                            Name = "Fantasy",
+                            tmdbId = 14
+                        },
+                        new
+                        {
+                            dbId = 10,
+                            Name = "History",
+                            tmdbId = 36
+                        },
+                        new
+                        {
+                            dbId = 11,
+                            Name = "Horror",
+                            tmdbId = 27
+                        },
+                        new
+                        {
+                            dbId = 12,
+                            Name = "Music",
+                            tmdbId = 10402
+                        },
+                        new
+                        {
+                            dbId = 13,
+                            Name = "Mystery",
+                            tmdbId = 9648
+                        },
+                        new
+                        {
+                            dbId = 14,
+                            Name = "Romance",
+                            tmdbId = 10749
+                        },
+                        new
+                        {
+                            dbId = 15,
+                            Name = "Science Fiction",
+                            tmdbId = 878
+                        },
+                        new
+                        {
+                            dbId = 16,
+                            Name = "TV Movie",
+                            tmdbId = 10770
+                        },
+                        new
+                        {
+                            dbId = 17,
+                            Name = "Thriller",
+                            tmdbId = 53
+                        },
+                        new
+                        {
+                            dbId = 18,
+                            Name = "War",
+                            tmdbId = 10752
+                        },
+                        new
+                        {
+                            dbId = 19,
+                            Name = "Western",
+                            tmdbId = 37
+                        });
                 });
 
             modelBuilder.Entity("APIef.Models.Movie", b =>
@@ -135,6 +251,23 @@ namespace APIef.Migrations
                     b.HasKey("RoleId");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            Name = "Regular"
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            Name = "Premium"
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            Name = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("APIef.Models.Room", b =>
@@ -176,6 +309,22 @@ namespace APIef.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserName = "admin",
+                            IsPremium = true,
+                            Password = "admin",
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            UserName = "regular",
+                            IsPremium = false,
+                            Password = "regular",
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("MovieMovieCollection", b =>

@@ -20,5 +20,6 @@ namespace APIef.Interface
         Task<string> CheckCredentialsAsync(UserCredentials userCredentials);
         Task ChangePasswordAsync(UserCredentials userCredentials);
         Task<List<User>> GetUsersAsync();
+        Task AddAdmin(User user);
     }
 }

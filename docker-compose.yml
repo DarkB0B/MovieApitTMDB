@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  socket:
+    container_name: socket
+    image: ${DOCKER_REGISTRY-}socket
+    build:
+      context: .
+      dockerfile: Socket/Dockerfile
+    ports:
+        - 8080:80
+        - 4433:80
+  api:
+    container_name: api
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: APIef/Dockerfile
+    ports:
+        - 8081:80
+        - 4434:443
+  db:
+    container_name: mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    
+    environment:
+      SA_PASSWORD: "P@ssw0rd"
+      ACCEPT_EULA: "Y"

@@ -33,6 +33,7 @@ builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     }
 );
+
 builder.Services.AddTransient<IUsers, UserService>();
 builder.Services.AddTransient<IRooms, RoomService>();
 builder.Services.AddTransient<IMovies, MoviesService>();
@@ -54,7 +55,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
+{   
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -64,5 +65,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<DataContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
 
 app.Run();

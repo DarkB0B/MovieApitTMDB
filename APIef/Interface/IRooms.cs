@@ -10,5 +10,7 @@ namespace APIef.Interface
         Task<bool> RoomExistsAsync(string roomId);
         Task DeleteRoomAsync(string roomId);
         Task AddListToRoomAsync(string roomId, MovieList movieList);
+        MovieList GetFinalList(Room room);
+        List<Movie> ValidateMovies(List<Movie> movies);
     }
 }

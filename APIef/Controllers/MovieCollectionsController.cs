@@ -8,20 +8,30 @@ using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using System.Configuration;
 
 namespace APIef.Controllers
 {
+    [Authorize(Roles = "Regular, Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class MovieCollectionsController : ControllerBase
     {
         private readonly IMovieCollections _movieCollectionsService;
         private readonly DataContext _context;
-        readonly ExternalApiService externalApiService = new ExternalApiService();
-        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context)
+        private IConfiguration _configuration;
+        readonly ExternalApiService externalApiService;
+
+        public MovieCollectionsController(IMovieCollections movieCollectionsService, DataContext context, IConfiguration configuration)
         {
             _movieCollectionsService = movieCollectionsService;
+            _configuration = configuration;
             _context = context;
+            _configuration = configuration;
+            string apiKey = _configuration.GetValue<string>("ApiKey");
+            externalApiService = new ExternalApiService(apiKey);
         }
 
         // GET api/movie-collections/{id}
@@ -63,6 +73,7 @@ namespace APIef.Controllers
 
         }
         // POST api/movie-collections
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<String> movieIds, string title, string description)
         {
@@ -76,43 +87,31 @@ namespace APIef.Controllers
             
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("SaveCollectionInDbFromWeb")]
-        public async Task<IActionResult> Postsave(int id)
+        [Route("test/CreateTestCollection")]
+        public async Task<IActionResult> PostTeste()
         {
+            int id = 28;
             MovieCollection movieCollection = new MovieCollection();
-            List<Movie> movies = await externalApiService.GetMoviesPerGenre(id,1);
+            List<Movie> movies = await externalApiService.GetMoviesPerGenre(id,1,true);
             movieCollection.Id = 0;
-            movieCollection.Title = "test";
-            movieCollection.Description = "test";
+            movieCollection.Title = "Test Collection";
+            movieCollection.Description = "Im Here Just For Testing";
             MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
             await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
 
             return Ok();
-        }
+        }       
 
-        [HttpPost]
-        [Route("SaveCollectionInDb")]
-        public async Task<IActionResult> Post([FromBody] MovieCollection movieCollection)
-        {
-            movieCollection.Id = 0;
-            List<Movie> movies = new List<Movie>();
-            foreach (Movie movie in movieCollection.Movies) { movies.Add(movie); };
-
-
-            MovieCollection movieCollection2 = _movieCollectionsService.AddMovieListToCollection(movieCollection, movies);
-            await _movieCollectionsService.AddMovieCollectionAsync(movieCollection2);
-
-            return Ok();
-        }
-
-       
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] MovieCollection movieCollection)
         {
             await _movieCollectionsService.UpdateMovieCollectionAsync(movieCollection);
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

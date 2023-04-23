@@ -8,10 +8,16 @@ namespace APIef.Services
 {
     public class ExternalApiService
     {
-        private string apiKey = "2c3773c58b96fc195869c5f3162ff399";
+        private string apiKey;
+       
        
         Deserializer deserializer = new Deserializer();
-        
+        public ExternalApiService(String key)
+        {
+            
+
+            apiKey = key;
+        }
 
 
         public async Task<List<Genre>> GetGenres()
@@ -42,17 +48,31 @@ namespace APIef.Services
                 return genres;
             }
         }
-        public async Task<List<Movie>> GetMoviesPerGenre(int genreId, int? page)
+        public async Task<List<Movie>> GetMoviesPerGenre(int genreId, int? page, bool? isMovie)
         {
+            string movieOrTv = "";
             if (page == null)
             {
                 page = 1;
             }
+            if (isMovie == null)
+            {
+                isMovie = true;
+            }
+            if (isMovie == true)
+            {
+                movieOrTv = "movie";
+            }
+            else
+            {
+                movieOrTv = "tv";
+            }
+            
             var client = new HttpClient();
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/movie?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&page={page}&sort_by=popularity.desc&vote_average.gte=7.5"),
+                RequestUri = new Uri($"https://api.themoviedb.org/3//discover/{movieOrTv}?api_key={apiKey}&language=en-US\r\n&with_genres={genreId}&page={page}&sort_by=popularity.desc&vote_average.gte=7.1"),
             };
 
             using (var response = await client.SendAsync(request))

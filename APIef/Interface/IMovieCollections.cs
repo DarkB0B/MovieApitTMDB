@@ -11,5 +11,6 @@ namespace APIef.Interface
         Task<bool> MovieCollectionExistsAsync(int id);
         Task DeleteMovieCollectionAsync(int id);
         public MovieCollection AddMovieListToCollection(MovieCollection movieCollection, List<Movie> movies);
+
     }
 }
