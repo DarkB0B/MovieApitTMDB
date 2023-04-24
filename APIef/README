@@ -1,0 +1,12 @@
+Backend is dockerized so it should run after running docker compose, there is some data seeded in database like basic accounts, 
+admin account: 
+login: admin  
+pass: admin 
+regular user account: 
+login: regular  
+pass: regular
+Also to be able to easilly test movie functionalities asociated with movie collections i suggest sending request to /api/moviecollections/test/CreateTestCollection 
+for this request to work it must be sent with admin permissions.
+
+To run flutter app you can run .apk file or open flutter project in visual studio code, run android emulator 
+(to be able to test all functionalities of app you will need at least 2 emulators) and type in command "flutter run"
